@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 require('dotenv').config();
 const express = require("express");
 const ejs_1 = require("ejs");
@@ -9,6 +10,7 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.static(__dirname + '/'));
 const guid = () => {
     const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
