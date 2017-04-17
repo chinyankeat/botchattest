@@ -298,7 +298,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 .wc-card {
   border: 1px solid #d2dde5;
   padding: 8px;
-/*  width: 302px;   Removed by Chin 17 Apr 2017 */
+  width: 302px;   
 }
 
 .wc-wide .wc-card {
