@@ -133,7 +133,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   right: 0;
   left: 0;
   top: 0;
-  bottom: 0; }
+  bottom: 0;
+}
 
 /* messages */
 .wc-message-wrapper {
@@ -297,7 +298,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 .wc-card {
   border: 1px solid #d2dde5;
   padding: 8px;
-  width: 302px; }
+/*  width: 302px;   Removed by Chin 17 Apr 2017 */
+}
 
 .wc-wide .wc-card {
   border: 1px solid #d2dde5;
