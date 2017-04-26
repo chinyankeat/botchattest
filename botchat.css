@@ -295,12 +295,12 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 
 /* alternate chat sizes */
 .wc-message {
-  max-width: 85%; }
+/*  max-width: 85%;*/ }   /* Chin Commented out 17 Apr 2017 to wc-card alignment problem*/
 
 .wc-card {
   border: 1px solid #d2dde5;
   padding: 8px;
-/*  width: 302px;   Chin Commented out 17 Apr 2017*/
+  width: 302px;  
 }
 
 .wc-wide .wc-card {
