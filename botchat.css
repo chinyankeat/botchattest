@@ -244,7 +244,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     list-style-type: none;
     text-align: center;
     float: left;
-    margin: 2px; }
+    margin: 0px; }        /* modified by Chin 28 Apr 2017 */
   .wc-card.hero img {
     display: block;
     margin-bottom: 11px; }
