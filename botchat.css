@@ -208,9 +208,10 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   font-size: 13px; }
   .wc-card button {
     background-color: transparent;
-    color: #000;
+    color: #0089F0;    /* modified by Chin 28 Apr 2017 */
+    font-weight: 600;  /* modified by Chin 28 Apr 2017 */
     min-height: 32px;
-    width: 300px;    /* modified by Chin 28 Apr 2017 */
+    width: 300px;      /* modified by Chin 28 Apr 2017 */
     padding: 0 16px; }
   .wc-card button:hover {
     background-color: transparent;
