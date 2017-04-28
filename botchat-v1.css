@@ -1,11 +1,11 @@
 /* reset */
 body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 16px; }    /* modified by Chin 28 Apr 2017 */
+  font-size: 18px; }
 
 .wc-app button {
   background-color: #FFE227;
-  border: 1px solid #00B9F0;
+  border: 1px solid #ccc;
   border-radius: 1px;
   color: #000;
   cursor: pointer;
@@ -210,7 +210,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     background-color: transparent;
     color: #000;
     min-height: 32px;
-    width: 300px;    /* modified by Chin 28 Apr 2017 */
+    width: 100%;
     padding: 0 16px; }
   .wc-card button:hover {
     background-color: transparent;
