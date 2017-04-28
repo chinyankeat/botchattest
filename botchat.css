@@ -6,7 +6,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 .wc-app button {
   background-color: #FFE227;
   border: 1px solid #00B9F0;
-  border-radius: 1px;
+  border-radius: 6px;    /* chin modified 28 Apr 2017 */
   color: #000;
   cursor: pointer;
   outline: none;
@@ -172,7 +172,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   width: 6px; }
 
 .wc-message-content {
-  border-radius: 2px;
+  border-radius: 10px;        /* Chin modified 28 Apr 2017 */
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
   padding: 8px;
   word-break: break-word; }
@@ -212,7 +212,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     font-weight: 600;  /* modified by Chin 28 Apr 2017 */
     min-height: 32px;
     width: 300px;      /* modified by Chin 28 Apr 2017 */
-    padding: 0 16px; }
+    padding: 0 16px;
+    border-radius: 6px; } /* Chin added 28 Apr 2017 */
   .wc-card button:hover {
     background-color: transparent;
     border-color: #3a96dd;
@@ -299,18 +300,18 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 /*  max-width: 85%;*/ }   /* Chin Commented out 17 Apr 2017 to wc-card alignment problem*/
 
 .wc-card {
-  border: 1px solid #d2dde5;
+  border: 0px solid #d2dde5;   /* Chin modified 28 Apr 2017 */
   padding: 8px;
   width: 302px;  
 }
 
 .wc-wide .wc-card {
-  border: 1px solid #d2dde5;
+  border: 0px solid #d2dde5;    /* Chin modified 28 Apr 2017 */
   padding: 8px;
   width: 398px; }
 
 .wc-narrow .wc-card {
-  border: 1px solid #d2dde5;
+  border: 0px solid #d2dde5;   /* Chin modified 28 Apr 2017 */
   padding: 8px;
   width: 198px; }
 
