@@ -155,7 +155,7 @@ bot.dialog('intro', [
         session.privateConversationData[NumOfFeedback] = 0;
         trackBotEvent(session, 'intro', 0);
 
-        session.send(emoji.emojify("Hello, I'm your friendly Digi Virtual Assistant and I'll be available from 9pm-12am :heart:"));
+        session.send("Hello, I'm your friendly Digi Virtual Assistant and I'll be available from 9pm-12am");
         
         var msg = new builder.Message(session)
             .addAttachment({
@@ -270,6 +270,7 @@ bot.dialog('Prepaid', [
                 .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Plans.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Prepaid Plans", "More"),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ]),
 
                 new builder.HeroCard(session)
@@ -277,7 +278,8 @@ bot.dialog('Prepaid', [
                 .subtitle('Stay Connected')
                 .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Addons.PNG') ])
                 .buttons([
-                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-addons', 'More')
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-addons', 'More'),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ]),
                         
                 new builder.HeroCard(session)
@@ -285,7 +287,8 @@ bot.dialog('Prepaid', [
                 .subtitle('Top-up your credit now!')
                 .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Reload.PNG') ])
                 .buttons([
-                    builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/reload-details.ep', 'More')
+                    builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/reload-details.ep', 'More'),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ])
 
             ]);
@@ -316,7 +319,8 @@ bot.dialog('PrepaidPlans', [
                 .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Live.png') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=20016&isBundle=n&ppymttype=PREPAID&ptype=VOICE&orderType=NL&_ga=1.167919842.2103412470.1490767162', 'Buy Now'),
-                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid/live', 'More Info')
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid/live', 'More Info'),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ]),
                 new builder.HeroCard(session)
                 .title('Digi Prepaid Best')
@@ -324,10 +328,11 @@ bot.dialog('PrepaidPlans', [
                 .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Best.png') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=20015&isBundle=n&ppymttype=PREPAID&ptype=VOICE&orderType=NL&_ga=1.94994527.2103412470.1490767162', 'Buy Now'),
-                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-plans', 'More Info')
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-plans', 'More Info'),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ])
             ]);
-        session.send(respCards);        
+        session.send(respCards);
         builder.Prompts.choice(session, "", "Main Menu", { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
@@ -354,6 +359,7 @@ bot.dialog('Postpaid', [
                 .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-Plans.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Postpaid Plans", "More"),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ]),
 
                 new builder.HeroCard(session)
@@ -361,7 +367,8 @@ bot.dialog('Postpaid', [
                 .subtitle('All the extras you need to stay connected')
                 .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-Extra.PNG') ])
                 .buttons([
-                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/postpaid-addons', 'More')
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/postpaid-addons', 'More'),
+//                    builder.CardAction.imBack(session, "Menu", "Main Menu")
                 ])
             ]);
         session.send(respCards);
@@ -1520,18 +1527,26 @@ bot.dialog('NLP', [
 });
 
 
-// R.5.3 - menu | FAQDialog | Prepaid
 bot.dialog('getFeedback', [
-    function (session) {        
-        builder.Prompts.choice(session, "We would appreciate your feedback\n Do you find our Virtual Assistant useful? ", 'Yes|No', { listStyle: builder.ListStyle.button });
+    function (session) {
+        builder.Prompts.choice(session, emoji.emojify("We would appreciate your feedback. How would you rate our Virtual Assistant? \n(1)not able to help me, (5)very useful"), emoji.emojify('1|2|3|4|5'), { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
         switch (results.response.index) {
             case 0:
-                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback Yes',1,0);
+                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback 1',1,0);
                 break;
             case 1:
-                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback No',1,0);
+                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback 2',1,0);
+                break;
+            case 2:
+                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback 3',1,0);
+                break;
+            case 3:
+                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback 4',1,0);
+                break;
+            case 4:
+                trackBotEvent(session,session.privateConversationData[LastMenu]+'|Feedback 5',1,0);
                 break;
             default:
                 session.send("Sorry, I didn\'t quite get that.");

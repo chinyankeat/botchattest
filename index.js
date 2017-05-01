@@ -32,19 +32,18 @@ app.get('/', (req, res) => {
         method: 'POST',
         headers: { Authorization: `${auth} ${appSecret}`, Accept: "application/json" }
     }).then(response => response.json()).then(result => {
-        
-        
-        const token = result["token"];
-        console.log("token", token, "retrieved at", new Date());
-        ejs_1.renderFile("./index.ejs", {
-            token,
-            secret: req.cookies.settings && req.cookies.settings.secret
-        }, (err, str) => {
-            if (err)
-                console.log("ejs error", err);
-            else
-                res.send(str);
-        });
+    });
+
+    const token = result["token"];
+    console.log("token", token, "retrieved at", new Date());
+    ejs_1.renderFile("./index.ejs", {
+        token,
+        secret: req.cookies.settings && req.cookies.settings.secret
+    }, (err, str) => {
+        if (err)
+            console.log("ejs error", err);
+        else
+            res.send(str);
     });
 });
 
@@ -55,7 +54,8 @@ app.post('/api/messages', bot.listen());
 // Serve all images
 app.use('/images', express.static('./bot/images'));
 
+var emoji = require('node-emoji');
 app.listen(process.env.port || process.env.PORT || 3000, () => {
-    console.log('listening to port 3000');
+    console.log(emoji.emojify('listening to port 3000'));
 });
 
