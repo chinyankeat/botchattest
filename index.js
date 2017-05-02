@@ -32,25 +32,24 @@ app.get('/', (req, res) => {
         method: 'POST',
         headers: { Authorization: `${auth} ${appSecret}`, Accept: "application/json" }
     }).then(response => response.json()).then(result => {
-    });
-
-    const token = result["token"];
-    console.log("token", token, "retrieved at", new Date());
-    ejs_1.renderFile("./index.ejs", {
-        token,
-        secret: req.cookies.settings && req.cookies.settings.secret
-    }, (err, str) => {
-        if (err)
-            console.log("ejs error", err);
-        else
-            res.send(str);
+        const token = result["token"];
+        console.log("token", token, "retrieved at", new Date());
+        ejs_1.renderFile("./index.ejs", {
+            token,
+            secret: req.cookies.settings && req.cookies.settings.secret
+        }, (err, str) => {
+            if (err)
+                console.log("ejs error", err);
+            else
+                res.send(str);
+        });
     });
 });
 
 // Register Bot
 var bot = require('./bot');
 app.post('/api/messages', bot.listen());
-
+ 
 // Serve all images
 app.use('/images', express.static('./bot/images'));
 
