@@ -53,8 +53,7 @@ app.post('/api/messages', bot.listen());
 // Serve all images
 app.use('/images', express.static('./bot/images'));
 
-var emoji = require('node-emoji');
 app.listen(process.env.port || process.env.PORT || 3000, () => {
-    console.log(emoji.emojify('listening to port 3000'));
+    console.log('listening to port 3000');
 });
 
