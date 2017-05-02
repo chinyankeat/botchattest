@@ -19,23 +19,26 @@ const guid = () => {
     return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 };
 
+var token = 0;
+
 app.post('/', (req, res) => {
     res.cookie('settings', req.body);
     res.redirect('/');
 });
 
 app.get('/', (req, res) => {
-    const appSecret = (req.cookies.settings && req.cookies.settings.secret) || process.env.APP_SECRET;
-    const endpoint = 'https://directline.botframework.com/v3/directline/tokens/generate';
-    const auth = 'Bearer';
-    fetch(endpoint, {
-        method: 'POST',
-        headers: { Authorization: `${auth} ${appSecret}`, Accept: "application/json" }
-    }).then(response => response.json()).then(result => {
-    });
+//    const appSecret = (req.cookies.settings && req.cookies.settings.secret) || process.env.APP_SECRET;
+//    const endpoint = 'https://directline.botframework.com/v3/directline/tokens/generate';
+//console.log ("what is wrong " + appSecret);
+//    const auth = 'Bearer';
+//    fetch(endpoint, {
+//        method: 'POST',
+//        headers: { Authorization: `Bearer qCTMpSsu6ys.cwA.sTA.sSJKzrAWjk3RX7tdaLbCDO2YglGj6_u9OR0qXkIsER0`, Accept: "application/json" }
+//    }).then(response => response.json()).then(result => {
+//        const token = result["token"];
+//        console.log("token", token, "retrieved at", new Date());
+//    });
 
-    const token = result["token"];
-    console.log("token", token, "retrieved at", new Date());
     ejs_1.renderFile("./index.ejs", {
         token,
         secret: req.cookies.settings && req.cookies.settings.secret
@@ -48,14 +51,25 @@ app.get('/', (req, res) => {
 });
 
 // Register Bot
-var bot = require('./bot');
-app.post('/api/messages', bot.listen());
+//var bot = require('./bot');
+//app.post('/api/messages', bot.listen());
 
 // Serve all images
-app.use('/images', express.static('./bot/images'));
+//app.use('/images', express.static('./bot/images'));
 
-var emoji = require('node-emoji');
 app.listen(process.env.port || process.env.PORT || 3000, () => {
-    console.log(emoji.emojify('listening to port 3000'));
+    console.log('listening to port 3000');
+
+    const endpoint = 'https://directline.botframework.com/v3/directline/tokens/generate';
+    const auth = 'Bearer';
+    fetch(endpoint, {
+        method: 'POST',
+        headers: { Authorization: `Bearer qCTMpSsu6ys.cwA.sTA.sSJKzrAWjk3RX7tdaLbCDO2YglGj6_u9OR0qXkIsER0`, Accept: "application/json" }
+    }).then(response => response.json()).then(result => {
+        token = result["token"];
+        console.log("token", token, "retrieved at", new Date());
+    });
+
+
 });
 
