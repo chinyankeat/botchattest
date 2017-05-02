@@ -25,6 +25,7 @@ var LastMenu = 'LastMenu';
 var NumOfFeedback = 'NumOfFeedback';
 var DialogId = 'DialogId';
 var DialogState = 'DialogState';
+var imagedir = 'https://yellowchat.azurewebsites.net';
 
 // Create bot
 var connector = new builder.ChatConnector(botConnectorOptions);
@@ -41,7 +42,7 @@ var bot = new builder.UniversalBot(connector, [
 
 
 // Validators
-//bot.library(require('./validators').createLibrary());
+bot.library(require('./validators').createLibrary());
 
 ////////////////////////////////////////////////////////////////////////////
 // Global Variables
@@ -118,7 +119,7 @@ function trackBotEvent(session, description, dialog_state, storeLastMenu) {
 "auth_key": "a6hea2",\
 "chat_id": "'+session.message.address.conversation.id+'",\
 "dialog_id": "'+session.privateConversationData[DialogId]+'",\
-"dialog_state":' + dialog_state + '",\
+"dialog_state":"' + dialog_state + '",\
 "dialog_type":"",\
 "dialog_input":"",\
 "chat_log": "'+session.privateConversationData[LastMenu]+'"}'
@@ -127,7 +128,7 @@ function trackBotEvent(session, description, dialog_state, storeLastMenu) {
     console.log("Logging : " + options.formData.data);
     try{
         request(options, function (error, response, body) {
-//            console.log(body);
+//            console.log("test test " + body);
         })
     } catch (e) {
 //        console.log("cannot log");
@@ -159,7 +160,7 @@ bot.dialog('intro', [
         
         var msg = new builder.Message(session)
             .addAttachment({
-                contentUrl: __dirname + '/images/digi-telecommunications.png',
+                contentUrl: imagedir + '/images/digi-telecommunications.png',
                 contentType: 'image/png',
                 name: 'BotFrameworkOverview.png'
             });
@@ -267,7 +268,7 @@ bot.dialog('Prepaid', [
                 new builder.HeroCard(session)
                 .title('Malaysia\'s Best Prepaid Packs')
                 .subtitle('Prepaid Plans\n')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Plans.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Prepaid-Plans.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Prepaid Plans", "More"),
 //                    builder.CardAction.imBack(session, "Menu", "Main Menu")
@@ -276,7 +277,7 @@ bot.dialog('Prepaid', [
                 new builder.HeroCard(session)
                 .title('Add On')
                 .subtitle('Stay Connected')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Addons.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Prepaid-Addons.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-addons', 'More'),
 //                    builder.CardAction.imBack(session, "Menu", "Main Menu")
@@ -285,7 +286,7 @@ bot.dialog('Prepaid', [
                 new builder.HeroCard(session)
                 .title('Reload')
                 .subtitle('Top-up your credit now!')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Reload.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Prepaid-Reload.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/reload-details.ep', 'More'),
 //                    builder.CardAction.imBack(session, "Menu", "Main Menu")
@@ -316,7 +317,7 @@ bot.dialog('PrepaidPlans', [
                 new builder.HeroCard(session)
                 .title('Digi Prepaid Live')
                 .subtitle('Ultimate Video + Music Pack')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Live.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Prepaid-Live.png') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=20016&isBundle=n&ppymttype=PREPAID&ptype=VOICE&orderType=NL&_ga=1.167919842.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid/live', 'More Info'),
@@ -325,7 +326,7 @@ bot.dialog('PrepaidPlans', [
                 new builder.HeroCard(session)
                 .title('Digi Prepaid Best')
                 .subtitle('Unlimited Social Internet Pack')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Prepaid-Best.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Prepaid-Best.png') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=20015&isBundle=n&ppymttype=PREPAID&ptype=VOICE&orderType=NL&_ga=1.94994527.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-plans', 'More Info'),
@@ -356,7 +357,7 @@ bot.dialog('Postpaid', [
                 new builder.HeroCard(session)
                 .title('Digi Postpaid')
                 .subtitle('The plans for you')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-Plans.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-Plans.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Postpaid Plans", "More"),
 //                    builder.CardAction.imBack(session, "Menu", "Main Menu")
@@ -365,7 +366,7 @@ bot.dialog('Postpaid', [
                 new builder.HeroCard(session)
                 .title('Extras')
                 .subtitle('All the extras you need to stay connected')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-Extra.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-Extra.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/postpaid-addons', 'More'),
 //                    builder.CardAction.imBack(session, "Menu", "Main Menu")
@@ -393,7 +394,7 @@ bot.dialog('PostpaidPlans', [
             .attachments([
                 new builder.HeroCard(session)
                 .title('Digi Postpaid 150 Infinite')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-Infinite.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-Infinite.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=DGI150&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.164776316.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=DGI150&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.164776316.2103412470.1490767162', 'Port In'),
@@ -402,7 +403,7 @@ bot.dialog('PostpaidPlans', [
                 ]),
                 new builder.HeroCard(session)
                 .title('Digi Postpaid 50')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-50.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-50.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10201VPA&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.239507461.769883286.1492574194', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10201VPA&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.155287800.2103412470.1490767162', 'Port In'),
@@ -411,7 +412,7 @@ bot.dialog('PostpaidPlans', [
                 ]),
                 new builder.HeroCard(session)
                 .title('Digi Postpaid 80')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-80.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-80.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10200VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.65621101.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10200VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.92479582.2103412470.1490767162', 'Port In'),
@@ -420,7 +421,7 @@ bot.dialog('PostpaidPlans', [
                 ]),
                 new builder.HeroCard(session)
                 .title('Digi Postpaid 110')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Postpaid-110.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Postpaid-110.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10202VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.92479582.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10202VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.94988767.2103412470.1490767162', 'Port In'),
@@ -485,7 +486,7 @@ bot.dialog('BroadbandPlans', [
                 new builder.HeroCard(session)
                 .title('Broadband 30')
                 .subtitle('For prepaid')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Broadband-30.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Broadband-30.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=20017&isBundle=n&ppymttype=PREPAID&ptype=BB&_ga=1.55846120.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/broadband', 'More Info')
@@ -493,7 +494,7 @@ bot.dialog('BroadbandPlans', [
                 new builder.HeroCard(session)
                 .title('Broadband 60')
                 .subtitle('For Postpaid')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Broadband-60.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Broadband-60.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=90000P&isBundle=y&ppymttype=POSTPAID&ptype=BB&_ga=1.55846120.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/broadband', 'More Info')
@@ -501,7 +502,7 @@ bot.dialog('BroadbandPlans', [
                 new builder.HeroCard(session)
                 .title('Broadband 100')
                 .subtitle('For Postpaid')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Broadband-100.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Broadband-100.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=90001P&isBundle=y&ppymttype=POSTPAID&ptype=BB&_ga=1.156903800.2103412470.1490767162', 'Buy Now'),
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/broadband', 'More Info')
@@ -531,35 +532,35 @@ bot.dialog('Roaming', [
                 new builder.HeroCard(session)
                 .title('Roaming Plans')
                 .subtitle('Check out your roaming options')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-Plan.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-Plan.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Roaming Plans", "More"),
                 ]),
                 new builder.HeroCard(session)
                 .title('Roam by country? ')
                 .subtitle('Just let us know where you\'regoing')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-Country.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-Country.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/international-roaming-rates', 'More')
                 ]),
                 new builder.HeroCard(session)
                 .title('Roaming Tips')
                 .subtitle('Here\'s all your need to know to stay connected')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-Tips.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-Tips.PNG') ])
                 .buttons([
                     builder.CardAction.imBack(session, "Roaming Tips", "More"),
                 ]),
                 new builder.HeroCard(session)
                 .title('IDD Rates')
                 .subtitle('International calls + SMS Rates')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-Rates.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-Rates.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/international-calls-sms-rates', 'More')
                 ]),
                 new builder.HeroCard(session)
                 .title('IDD 133')
                 .subtitle('Enjoy the lowest IDD Rates to 36 countries')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-133.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-133.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/idd-133', 'More')
                 ])
@@ -587,21 +588,21 @@ bot.dialog('RoamingPlans', [
                 new builder.HeroCard(session)
                 .title('Roam Like Home')
                 .subtitle('The only postpaid plan you need to roam with')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-LikeHome.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-LikeHome.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/roam-like-home-monthly', 'More')
                 ]),
                 new builder.HeroCard(session)
                 .title('Roaming Pass')
                 .subtitle('Round the clock chatting & Surfing in 50 countries')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-Pass.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-Pass.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/roaming-pass', 'More')
                 ]),
                 new builder.HeroCard(session)
                 .title('Unlimited Internet')
                 .subtitle('Enjoy a hassle free roaming experience')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-UnlimitedInternet.PNG') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-UnlimitedInternet.PNG') ])
                 .buttons([
                     builder.CardAction.openUrl(session, 'http://new.digi.com.my/roaming/unlimited-internet', 'More')
                 ]),
@@ -805,17 +806,17 @@ bot.dialog('MyDigiCheckRoamUsage', [
                 new builder.HeroCard(session)
                 .title('Step 1')
                 .subtitle('On usage page, select "View Details"')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-MyDigi-Step1.png') ]),
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-MyDigi-Step1.png') ]),
                 new builder.HeroCard(session)
                 .title('Step 2')
                 .subtitle('Select "Internet" for Internet quota balance')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-MyDigi-Step2.png') ]),
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-MyDigi-Step2.png') ]),
                 new builder.HeroCard(session)
                 .title('Step 3')
                 .subtitle('Select "Voice" for Voice minutes balance')
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-MyDigi-Step3.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-MyDigi-Step3.png') ])
             ]);
-        session.send(respCards);        
+        session.send(respCards);
         builder.Prompts.choice(session, "", "Main Menu", { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
@@ -835,15 +836,15 @@ bot.dialog('UmbCheckRoamUsage', [
             .attachmentLayout(builder.AttachmentLayout.carousel)
             .attachments([
                 new builder.HeroCard(session)
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-UMB-Step1.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-UMB-Step1.png') ])
                 .title('Step 1')
                 .subtitle('In UMB: Dial *128*5*1*6#'),
                 new builder.HeroCard(session)
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-UMB-Step2.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-UMB-Step2.png') ])
                 .title('Step 2')
                 .subtitle('Select 3 for voice minutes balance'),
                 new builder.HeroCard(session)
-                .images([ builder.CardImage.create(session, __dirname + '/images/Roaming-UMB-Step3.png') ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/Roaming-UMB-Step3.png') ])
                 .title('Step 3')
                 .subtitle('View your balance')
             ]);
@@ -1561,6 +1562,72 @@ bot.dialog('getFeedback', [
 
 
 
+bot.dialog('CheckMyAccount', [
+    function (session) {
+        session.send("Just let us verify your identity for a sec ");
+        
+        session.beginDialog('validators:phonenumber', {
+            prompt: session.gettext('What is your phone number?'),
+            retryPrompt: session.gettext('The phone number is invalid. Please key in Digi Phone Number 01xxxxxxxx'),
+            maxRetries: MaxRetries
+        });
+    },
+    function (session, results) {
+        session.userData.phoneNumber = results.response;
+        session.userData.oneTimeCode = GenerateOtp(session.userData.phoneNumber);
+        builder.Prompts.text(session, 'I have just sent the One Time Code to you. Can you please key in the 4 digit code?');
+    },
+    function (session, results) {
+        session.send('Your Phone is ' + session.userData.phoneNumber + ' your code is ' + session.userData.oneTimeCode);
+        session.replaceDialog('PrepaidAccountOverview');
+    },
+    function (session) {
+        // Reload menu
+        session.replaceDialog('menu');
+    }
+]).triggerAction({
+    matches: /^(chinyankeat)/i
+});
+
+function GenerateOtp(phoneNumber){
+    
+    var randomotp = math.randomInt(1,9999);
+    var args = {
+        data:  "{\
+                 \"ref_id\": \"TEST123456#\",\
+                 \"service_id\": \"DG_HELLOWIFI\",\
+                 \"msisdn\": \"" + phoneNumber + "\",\
+                 \"status\": \"1\",\
+                 \"transaction_id\": \"\",\
+                 \"price_code\": \"VAS220000\",\
+                 \"keyword\": \"test\",\
+                 \"source_mobtel\": \"20000\",\
+                 \"sender_name\": \"\",\
+                 \"sms_contents\": [\
+                  {\
+                   \"content\": \"RM0.00 Digi Virtual Assistant. Your one time PIN is " + randomotp + ", valid for the next 3 minutes\",\
+                   \"ucp_data_coding_id\": \"0\",\
+                   \"ucp_msg_type\": \"3\",\
+                   \"ucp_msg_class\": \"3\"\
+                  }\
+                 ]\
+                }",
+        headers: { Authorization: "Basic " + process.env.SMS_AUTHORIZATIONKEY,
+                   "Content-Type": "application/json"}
+    };
+    restclient.post(process.env.SMS_SENDLINK  + phoneNumber, args, function(data,response) {});
+return randomotp;
+}
+
+
+
+
+
+
+
+
+
+
 ///////////////////////////////////////////Previous Menu, maintained until tested. 
 // R.1 - menu | PrepaidDialog
 bot.dialog('PrepaidDialog', [
@@ -1699,6 +1766,17 @@ function getCardsPrepaidPlan(session) {
 bot.dialog('MyAccountPrepaid', [
     function (session) {
         session.send("Just let us verify your identity for a sec ");
+
+
+        session.userData.oneTimeCode = GenerateOtp(session.userData.phoneNumber);
+        var userOtpRegex = new RegExp(userOtp);
+        console.log("otp is " + session.userData.oneTimeCode);        
+        builder.DialogAction.validatedPrompt('I have just sent the One Time Code to you. Can you please key in the 4 digit code?', function (response) {
+            return userOtpRegex.test(response);
+        })
+        
+        
+        
         
         session.beginDialog('validators:phonenumber', {
             prompt: session.gettext('What is your phone number?'),
@@ -1710,6 +1788,12 @@ bot.dialog('MyAccountPrepaid', [
         session.userData.phoneNumber = results.response;
         session.userData.oneTimeCode = GenerateOtp(session.userData.phoneNumber);
         builder.Prompts.text(session, 'I have just sent the One Time Code to you. Can you please key in the 4 digit code?');
+        
+        var userOtpRegex = new RegExp(userOtp);
+        
+        builder.DialogAction.validatedPrompt('I have just sent the One Time Code to you. Can you please key in the 4 digit code?', function (response) {
+            return userOtpRegex.test(response);
+        })
     },
     function (session, results) {
         session.send('Your Phone is ' + session.userData.phoneNumber + ' your code is ' + session.userData.oneTimeCode);
@@ -1747,7 +1831,9 @@ function GenerateOtp(phoneNumber){
         headers: { Authorization: "Basic " + process.env.SMS_AUTHORIZATIONKEY,
                    "Content-Type": "application/json"}
     };
-    restclient.post(process.env.SMS_SENDLINK  + phoneNumber, args, function(data,response) {});
+//restclient.post(process.env.SMS_SENDLINK  + phoneNumber, args, function(data,response) {});
+console.log("sent OTP" + process.env.SMS_SENDLINK + phoneNumber + " data " + args.data); 
+
 return randomotp;
 }
 
@@ -1774,430 +1860,6 @@ bot.dialog('PrepaidAccountOverview', [
         }
     }
 ])
-
-
-// R.1 - menu | PostpaidDialog
-bot.dialog('PostpaidDialog', [
-    function (session) {
-        trackBotEvent(session, 'Main|Postpaid',1);
-
-        builder.Prompts.choice(session, "Here are some things that I can help you with", 'Postpaid Plans|Promotions|Internet Plans|My Account|FAQ', { listStyle: builder.ListStyle.button });
-    },
-    function (session, results) {
-        switch (results.response.index) {
-        case 0:
-            var cards = getCardsPostpaidPlan();
-		    var reply = new builder.Message(session).attachmentLayout(builder.AttachmentLayout.carousel).attachments(cards);
-    		session.send(reply);
-            break;
-	    case 1:    // Promotions
-	    case 2:    // Internet Plans
-        case 3:    // My Account
-            session.send("coming soon");
-            break;
-        default:
-            session.send("Sorry, I didn't quite get that.");
-            session.beginDialog('PostpaidDialog');
-            break;
-        }
-    },
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-
-// R.4 - menu | DownloadMyDigi
-bot.dialog('DownloadMyDigi', [
-    function (session) {
-        trackBotEvent(session, 'Main|DownloadMyDigi',1);
-
-        var downloadMyDigiCard = new builder.Message(session)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments([
-                new builder.ThumbnailCard(session)
-                .title('Download MyDigi')
-                .subtitle('The all-new MyDigi rewards you in every way')
-                .images([
-                    builder.CardImage.create(session, 'http://new.digi.com.my/cs/site_template/digi/images/mydigi-exclusive/logo-digi_1.png')
-                ])
-                .buttons([
-                    builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download Now'),
-                    builder.CardAction.imBack(session, "Back", "Back")
-                ])
-            ]);
-        builder.Prompts.choice(session, downloadMyDigiCard, "Back");        
-    }, 
-    function (session) {
-        session.endDialog();
-        session.replaceDialog('menu');
-    }
-])
-
-
-// R.5 - menu | FAQDialog
-bot.dialog('FaqDialog', [
-    function (session) {
-        trackBotEvent(session, 'Main|FAQ',1);
-
-        builder.Prompts.choice(session, "Soemthing to begin with", 'General|Postpaid|Broadband|Prepaid|Roaming', { listStyle: builder.ListStyle.button });
-    },
-    function (session, results) {
-        switch (results.response.index) {
-        case 0:
-            session.beginDialog('FaqGeneral');
-            break;
-	    case 1:    
-            session.beginDialog('FaqPostpaid');
-            break;
-	    case 2:    
-            session.beginDialog('FaqBroadband');
-            break;
-        case 3:    // My Account
-            session.beginDialog('FaqPrepaid');
-            break;
-        case 4:    // My Account
-            session.beginDialog('FaqRoaming');
-            break;
-        default:
-            session.send("Sorry, I didn't quite get that.");
-            session.beginDialog('PostpaidDialog');
-            break;
-        }
-    },
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-// R.5.0 - menu | FAQDialog | FaqGeneral
-bot.dialog('FaqGeneral', [
-    function (session) {
-        trackBotEvent(session, 'Main|FAQ|General',1);
-
-        var msg = new builder.Message(session)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments([
-                new builder.ThumbnailCard(session)
-                    .title("PDPA")
-                    .subtitle("PDPA â€“ what is personal data protection act ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:100", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Toll Free")
-                    .subtitle("Will I get charged for toll free no 1300/1800?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:101", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Port In/Out")
-                    .subtitle("How to port in/out ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:102", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Register MyDigi")
-                    .subtitle("How to register Mydigi ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:103", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Check Account No")
-                    .subtitle("How to check my account number ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:104", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Activate VOLTE")
-                    .subtitle("How to activate VOLTE ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:105", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Talktime Transer")
-                    .subtitle("How to do Talktime Transfer ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:106", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Payment for Others")
-                    .subtitle("How to make payment for other number via Mydigi ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:107", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Download Bill")
-                    .subtitle("How to download bill via Mydigi ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:108", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("PUK code")
-                    .subtitle("What is my PUK code ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:109", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Change Ownership")
-                    .subtitle("How to change ownership ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:110", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Call 1300")
-                    .subtitle("Why Iâ€™ve been charge calling 1300 number ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:111", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Add FnF")
-                    .subtitle("How to check and add FnF number ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:112", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Digi Store")
-                    .subtitle("Where is Digi Store/Centre ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:113", "Answer")
-                    ])            ]);        
-        builder.Prompts.choice(session, msg, "select:100|select:101|select:102|select:103|select:104|select:105|select:106|select:107|select:108|select:109|select:110|select:111|select:112|select:113");
-    },
-    function (session, results) {
-        var action, item;
-        var kvPair = results.response.entity.split(':');
-        switch (kvPair[0]) {
-            case 'select':
-                action = 'selected';
-                break;
-        }
-        switch (kvPair[1]) {
-            case '100':
-                item = "PDPA Answer";
-                break;
-            case '101':
-                item = "Toll Free Answer";
-                break;
-            case '102':
-                item = "Port In/Out Answer";
-                break;
-            case '103':
-                item = "Register MyDigi Answer";
-                break;
-            case '104':
-                item = "Check Account No Answer";
-                break;
-            case '105':
-                item = "Activate VOLTE Answer";
-                break;
-            case '106':
-                item = "Talktime Transer Answer";
-                break;
-            case '107':
-                item = "Payment for Others Answer";
-                break;
-            case '108':
-                item = "Download Bill Answer";
-                break;
-            case '109':
-                item = "PUK code Answer";
-                break;
-            case '110':
-                item = "Change Ownership Answer";
-                break;
-            case '111':
-                item = "Call 1300 Answer";
-                break;
-            case '112':
-                item = "Add FnF Answer";
-                break;
-            case '113':
-                item = "Digi Store Answer";
-                break;
-        }
-        session.endDialog('You %s "%s"', action, item);
-    }, 
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-// R.5.1 - menu | FAQDialog | FaqPostpaid
-bot.dialog('FaqPostpaid', [
-    function (session) {
-        trackBotEvent(session, 'Main|FAQ|Postpaid',1);
-
-        var msg = new builder.Message(session)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments([
-                new builder.ThumbnailCard(session)
-                    .title("Bill Cycle")
-                    .subtitle("Can I change my bill cycle date to a different date to cater for my pay day?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:200", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Phone Package")
-                    .subtitle("Can I know latest phone package ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:201", "Answer")
-                    ]),
-                new builder.ThumbnailCard(session)
-                    .title("Latest Plan")
-                    .subtitle("What are the available call plan ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:202", "Answer")
-                    ])
-            ]);       
-        builder.Prompts.choice(session, msg, "select:200|select:201|select:202");
-    },
-    function (session, results) {
-        var action, item;
-        var kvPair = results.response.entity.split(':');
-        switch (kvPair[0]) {
-            case 'select':
-                action = 'selected';
-                break;
-        }
-        switch (kvPair[1]) {
-            case '200':
-                item = "Bill Cycle Answer";
-                break;
-            case '201':
-                item = "Phone Package Answer";
-                break;
-            case '202':
-                item = "Latest Plan Answer";
-                break;
-        }
-        session.endDialog('You %s "%s"', action, item);
-    }, 
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-// R.5.2 - menu | FAQDialog | FaqBroadband
-bot.dialog('FaqBroadband', [
-    function (session) {
-        trackBotEvent(session, 'Main|FAQ|Broadband',1);
-
-        var msg = new builder.Message(session)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments([
-                new builder.ThumbnailCard(session)
-                    .title("Quota")
-                    .subtitle("How do I check broadband quota ?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:300", "Answer")
-                    ])
-            ]);        
-        builder.Prompts.choice(session, msg, "select:300");
-    },
-    function (session, results) {
-        var action, item;
-        var kvPair = results.response.entity.split(':');
-        switch (kvPair[0]) {
-            case 'select':
-                action = 'selected';
-                break;
-        }
-        switch (kvPair[1]) {
-            case '300':
-                item = "Quota Answer";
-                break;
-        }
-        session.endDialog('You %s "%s"', action, item);
-    }, 
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-// R.5.3 - menu | FAQDialog | Prepaid
-bot.dialog('FaqPrepaid', [
-    function (session) {
-        trackBotEvent(session, 'Main|FAQ|Prepaid',1);
-
-        var msg = new builder.Message(session)
-            .attachmentLayout(builder.AttachmentLayout.carousel)
-            .attachments([
-                new builder.ThumbnailCard(session)
-                    .title("Buddyz")
-                    .subtitle("Why I  am being charge RM10 to add buddyz number?")
-                    .buttons([
-                        builder.CardAction.imBack(session, "select:400", "Answer")
-                    ])
-            ]);        
-        builder.Prompts.choice(session, msg, "select:400");
-    },
-    function (session, results) {
-        var action, item;
-        var kvPair = results.response.entity.split(':');
-        switch (kvPair[0]) {
-            case 'select':
-                action = 'selected';
-                break;
-        }
-        switch (kvPair[1]) {
-            case '400':
-                item = "Buddyz Answer";
-                break;
-        }
-        session.endDialog('You %s "%s"', action, item);
-    }, 
-    function (session) {
-        // Reload menu
-        session.replaceDialog('menu');
-    }
-])
-
-function getCardsPostpaidPlan(session) {
-    return [
-        new builder.HeroCard(session)
-            .title('Postpaid 50')
-            .subtitle('The internet you need at the best rates')
-            .images([
-                builder.CardImage.create(session, 'https://2.bp.blogspot.com/-BaSSHAGxr1o/V_2_AUiAwDI/AAAAAAAAbPo/RX4k1SMyF_UAmYMu0WzYkQN-F3F_IW5yQCLcB/s1600/digi%2B50.PNG')
-            ])
-            .buttons([
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10201VPA&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.98087199.1675682806.1470899460', 'Buy Now'),
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10201VPA&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.98087199.1675682806.1470899460', 'Port In'),
-                builder.CardAction.dialogAction(session, 'ChangeOfPlans')
-            ]),
-        new builder.HeroCard(session)
-            .title('Postpaid 80')
-            .subtitle('Never go without internet')
-            .images([
-                builder.CardImage.create(session, 'https://2.bp.blogspot.com/-XNZiuqJSEx0/V_2_AsP7OBI/AAAAAAAAbPs/f-BL7sjDdbcMroFcRKXtTOINbwtW7S-BwCLcB/s1600/digi%2B80.PNG')
-            ])
-            .buttons([
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10200VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.162140604.1675682806.1470899460', 'Buy Now'),
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10200VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.162140604.1675682806.1470899460', 'Port In'),
-                builder.CardAction.dialogAction(session, 'ChangeOfPlans')
-            ]),
-        new builder.HeroCard(session)
-            .title('Postpaid 110')
-            .subtitle('All the internet you will ever need')
-            .images([
-                builder.CardImage.create(session, 'http://store.malaysiable.com/uploads/D/88/D88287702A.jpeg')
-            ])
-            .buttons([
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10202VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=NL&_ga=1.163698367.1675682806.1470899460', 'Buy Now'),
-                builder.CardAction.openUrl(session, 'https://store.digi.com.my/storefront/product-config.ep?pID=10202VP_EX&isBundle=y&ppymttype=POSTPAID&ptype=VOICE&orderType=MNP&_ga=1.63176367.1675682806.1470899460', 'Port In'),
-                builder.CardAction.dialogAction(session, 'ChangeOfPlans')
-            ])
-    ];
-}
-
-
-
 
 
 //////////////////////////////////////////////////////////////////////////////
