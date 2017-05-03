@@ -132,16 +132,16 @@ function trackBotEvent(session, description, dialog_state, storeLastMenu) {
     if (process.env.STAGING) {
         console.log("Logging : " + options.formData.data);  // Log if this is Staging Environment
     }
-    if(process.env.STAGING != 1) {
+    else{
         try{
             request(options, function (error, response, body) { // Send to DB if this is Production Environment
                 if (process.env.DEVELOPMENT) {
-                    console.log("DB Log:" + body);              // Log if this is Production & Development Mode
+                    //console.log("DB Log:" + body);              // Log if this is Production & Development Mode
                 }
             })
         } catch (e) {
             if (process.env.DEVELOPMENT) {
-                console.log("cannot log to DB");                // Log if this is Production &Development Environment
+                //console.log("cannot log to DB");                // Log if this is Production &Development Environment
             }
         }
     }
