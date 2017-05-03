@@ -107,6 +107,9 @@ function trackBotEvent(session, description, dialog_state, storeLastMenu) {
 //    var d = new Date();
 //    var offset = (new Date().getTimezoneOffset() / 60) * -1;
 //    var nowtime = new Date(d.getTime() + offset).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    if(session.privateConversationData[DialogId] === undefined) {
+        session.privateConversationData[DialogId] = session.message.address.id;
+    }
     
     var options = {
         method: 'POST',
