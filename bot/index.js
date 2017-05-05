@@ -58,6 +58,12 @@ var bot = new builder.UniversalBot(connector, [
 bot.library(require('./validators').createLibrary());
 // start by getting API Gateway token first
 GetSmsAuthToken();
+
+// Initialize Telemetry Modules
+var telemetryModule = require('./telemetry-module.js'); // Setup for Application Insights
+var appInsights = require('applicationinsights');
+appInsights.setup(process.env.APPINSIGHTS_INSTRUMENTATIONKEY).start();
+var appInsightsClient = appInsights.getClient();
 ////////////////////////////////////////////////////////////////////////////
 
 
@@ -141,7 +147,7 @@ function trackBotEvent(session, description, dialog_state, storeLastMenu) {
         }
     };
 
-    if (process.env.LOGGING) {
+    if (process.env.LOGGING>0) {
         try{
             request(options, function (error, response, body) { // Send to DB if this is Production Environment
                 if (process.env.DEVELOPMENT) {
@@ -180,16 +186,14 @@ bot.dialog('intro', [
         session.privateConversationData[DialogId] = session.message.address.id;
 
         trackBotEvent(session, 'intro', 0);
-
-        session.send("Hello, I'm your friendly Digi Virtual Assistant and I'll be available from 9pm-12am");
         
-        var msg = new builder.Message(session)
-            .addAttachment({
-                contentUrl: imagedir + '/images/digi-telecommunications.png',
-                contentType: 'image/png',
-                name: 'BotFrameworkOverview.png'
-            });
-        session.send(msg);        
+        var respCards = new builder.Message(session)
+            .attachments([
+                new builder.HeroCard(session)
+                .subtitle('Hello, I\'m your friendly Digi Virtual Assistant and I\'ll be available from 9pm-12am')
+                .images([ builder.CardImage.create(session, imagedir + '/images/digi-telecommunications.png') ])
+                ]);
+        session.send(respCards);        
         session.replaceDialog('menu');        
     }
 ]);
@@ -677,6 +681,7 @@ bot.dialog('RoamingTips', [
                 ]),
                 new builder.HeroCard(session)
                 .title('Turn on/off data roaming')
+                .subtitle('How long are you with Digi?')
                 .buttons([
                     builder.CardAction.imBack(session, "iOS Data Roaming", "iOS"),
                     builder.CardAction.imBack(session, "Android Data Roaming", "Android"),
@@ -1157,10 +1162,10 @@ bot.dialog('GoingOverseas', [
     function (session) {
         trackBotEvent(session, 'menu|CommonlyAskedQuestion|AllAboutMyAccount|AllAboutMyAccount2|GoingOverseas',1);
 
-        builder.Prompts.choice(session, "For short holidays, stay in touch by activating Roaming Services", 'Main Menu', { listStyle: builder.ListStyle.button });
+        builder.Prompts.choice(session, "For short holidays, stay in touch by activating Roaming Services", 'Roaming', { listStyle: builder.ListStyle.button });
     },
     function (session, results) {
-        session.replaceDialog('menu');
+        session.replaceDialog('Roaming');
     }
 ]).triggerAction({
     matches: /(Going Overseas)|(Activate Roaming)/i
