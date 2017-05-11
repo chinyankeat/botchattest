@@ -1,7 +1,7 @@
 /* reset */
 body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 16px; }    /* modified by Chin 28 Apr 2017 */
+  font-size: 15px; }    /* modified by Chin 28 Apr 2017 */
 
 .wc-app button {
   background-color: #FFE227;
@@ -175,7 +175,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   width: 6px; }
 
 .wc-message-content {
-  border-radius: 16px;        /* Chin modified 28 Apr 2017 */
+  border-radius: 10px;        /* Chin modified 28 Apr 2017 */
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
   padding: 8px;
   word-break: break-word; }
@@ -208,7 +208,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 /* cards */
 .wc-card {
   background-color: rgba(255, 255, 255, 0); /* modified by Chin 3 May 2017 */
-  font-size: 13px; }
+  font-size: 15px; }
   .wc-card button {
     background-color: #FFFFFF;    /* modified by Chin 3 May 2017 */
     color: #0073de;    /* modified by Chin 28 Apr 2017 */
@@ -216,7 +216,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     min-height: 32px;
     width: 270px;      /* modified by Chin 9 May 2017 for avatar*/
     padding: 0 16px;
-    border-radius: 12px;/* Chin added 28 Apr 2017 */
+    border-radius: 14px;/* Chin added 28 Apr 2017 */
     font-size: 14px; } /* Chin added 5 May  2017 */
   .wc-card button:hover {
     background-color: #0073de;    /* modified by Chin 3 May 2017 */
@@ -230,8 +230,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     font-size: 15px;
     font-weight: 700; }
   .wc-card h2 {
-    color: #0000;
-    font-size: 16px;
+    color: #000000;
+    font-size: 15px;
     font-weight: normal;
     margin-bottom: 8px; }
   .wc-card p {
@@ -253,7 +253,6 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   .wc-card.hero img {
     display: block;
     margin-bottom: 11px; 
-    padding-bottom: 10px;    /* Added by Chin to add space on bottom of image 11 May 2017*/
     margin: auto;    }    /* Added by Chin 28 Apr 2017 */
   .wc-card.receipt table {
     border-collapse: collapse;
@@ -386,11 +385,11 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   text-align: right; }
 
 .wc-message-from-me .wc-message-content {
-  background-color: #FFFFFF;
-  color: #000; }
+  background-color: #0073de;
+  color: #FFFFFF; }
 
 .wc-message-from-me svg.wc-message-callout path {
-  fill: #FFE227; }
+  fill: rgba(0, 115, 222, 0); }
 
 .wc-message-from-me svg.wc-message-callout path.point-left {
   display: none; }
