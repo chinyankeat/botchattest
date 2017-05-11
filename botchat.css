@@ -211,7 +211,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   font-size: 13px; }
   .wc-card button {
     background-color: #FFFFFF;    /* modified by Chin 3 May 2017 */
-    color: #055cb2;    /* modified by Chin 28 Apr 2017 */
+    color: #0073de;    /* modified by Chin 28 Apr 2017 */
     font-weight: 600;  /* modified by Chin 28 Apr 2017 */
     min-height: 32px;
     width: 270px;      /* modified by Chin 9 May 2017 for avatar*/
@@ -219,12 +219,12 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     border-radius: 12px;/* Chin added 28 Apr 2017 */
     font-size: 14px; } /* Chin added 5 May  2017 */
   .wc-card button:hover {
-    background-color: #055CB2;    /* modified by Chin 3 May 2017 */
-    border-color: #055CB2;        /* modified by Chin 3 May 2017 */
+    background-color: #0073de;    /* modified by Chin 3 May 2017 */
+    border-color: #0073de;        /* modified by Chin 3 May 2017 */
     color: #FFFFFF; }             /* modified by Chin 3 May 2017 */
   .wc-card button:active {
-    background-color: #3a96dd;
-    border-color: #3a96dd;
+    background-color: #0073de;
+    border-color: #0073de;
     color: #fff; }
   .wc-card h1 {
     font-size: 15px;
