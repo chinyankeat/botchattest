@@ -120,9 +120,11 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 .wc-console {
   border: 1px solid #dbdee1; /* 9 May 2017 Chin modified to make input area line thinner */
   border-radius: 30px;    /* 9 May 2017 Chin added to make input area rounded */
-  bottom: 0;
+  bottom: 2px;
   box-sizing: border-box;
-  height: 50px;
+  height: 40px;        /* 9 May Chin reduced height */
+  width: 90%;          /* 9 May Chin reduced width to 90% */
+  margin: auto;        /* 9 May Chin centered the bubble */
   left: 0;
   position: absolute;
   right: 0; }
@@ -173,7 +175,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   width: 6px; }
 
 .wc-message-content {
-  border-radius: 10px;        /* Chin modified 28 Apr 2017 */
+  border-radius: 16px;        /* Chin modified 28 Apr 2017 */
   box-shadow: 0px 1px 1px 0px rgba(0, 0, 0, 0.2);
   padding: 8px;
   word-break: break-word; }
@@ -214,7 +216,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     min-height: 32px;
     width: 270px;      /* modified by Chin 9 May 2017 for avatar*/
     padding: 0 16px;
-    border-radius: 14px;/* Chin added 28 Apr 2017 */
+    border-radius: 12px;/* Chin added 28 Apr 2017 */
     font-size: 14px; } /* Chin added 5 May  2017 */
   .wc-card button:hover {
     background-color: #055CB2;    /* modified by Chin 3 May 2017 */
@@ -228,8 +230,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
     font-size: 15px;
     font-weight: 700; }
   .wc-card h2 {
-    color: #808c95;
-    font-size: 14px;
+    color: #0000;
+    font-size: 16px;
     font-weight: normal;
     margin-bottom: 8px; }
   .wc-card p {
@@ -251,6 +253,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   .wc-card.hero img {
     display: block;
     margin-bottom: 11px; 
+    padding-bottom: 10px;    /* Added by Chin to add space on bottom of image 11 May 2017*/
     margin: auto;    }    /* Added by Chin 28 Apr 2017 */
   .wc-card.receipt table {
     border-collapse: collapse;
@@ -383,7 +386,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   text-align: right; }
 
 .wc-message-from-me .wc-message-content {
-  background-color: #FFE227;
+  background-color: #FFFFFF;
   color: #000; }
 
 .wc-message-from-me svg.wc-message-callout path {
@@ -433,7 +436,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 
 .wc-console svg {
   fill: #055cb2;    /* 9 May 2017 - Chin modified to change arrow color */
-  margin: 11px; }
+  margin: 8px; }    /* 9 May 2017 - Chin modified adjust arrow position down a bit*/
 
 .wc-console textarea, .wc-console input[type=text] {
   border: none;
