@@ -37,7 +37,16 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   right: 0;
   top: 0;
   z-index: 1; }
-.wc-header .wc-header-menu {
+
+.wc-header-icon{
+  border-radius: 30px;
+  border: 1px solid #ccc;
+}
+.wc-header-text {
+  position: absolute;
+  left: 40px;
+}
+.wc-header-menu {
   position: absolute;
   right: 10px;
 }
@@ -122,8 +131,8 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
 
 .wc-console {
   border: 1px solid #dbdee1; /* 9 May 2017 Chin modified to make input area line thinner */
-  border-radius: 30px;    /* 9 May 2017 Chin added to make input area rounded */
-  bottom: 2px;
+  border-radius: 10px;    /* 9 May 2017 Chin added to make input area rounded */
+  bottom: 10px;
   box-sizing: border-box;
   height: 40px;        /* 9 May Chin reduced height */
   width: 90%;          /* 9 May Chin reduced width to 90% */
@@ -142,6 +151,7 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   bottom: 0;
   max-width: 400px;
   margin: auto;
+  border-left: 1px solid #000;border-right: 1px solid #000;background: #fff;
 }
 
 /* messages */
