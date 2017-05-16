@@ -54,6 +54,15 @@ body .wc-app, .wc-app button, .wc-app input, .wc-app textarea {
   background-color: #0073de;
   color: #FFFFFF;
 }
+.wc-loading-container {
+  position: relative;
+}
+.wc-loading-container-typing {
+  display: block;
+  position: absolute;
+  top: 8px;
+  left: 40px;
+}
 
 .wc-time {
   color: #999;
