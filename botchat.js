@@ -982,8 +982,8 @@
                         t.sendPostBack(e, s, n, r);
                         break;
                     case "openUrl":
-alert ("Open URL for [" + p + "][" + e + "][" + n + "][" + r + "][" + o + "] at URL [" + s+"]");
-						break;
+//alert ("Open URL for [" + p + "][" + e + "][" + n + "][" + r + "][" + o + "] at URL [" + s+"]");
+//						break;
                     case "call":
                     case "playAudio":
                     case "playVideo":
