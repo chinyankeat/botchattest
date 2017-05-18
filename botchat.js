@@ -982,8 +982,16 @@
                         t.sendPostBack(e, s, n, r);
                         break;
                     case "openUrl":
-//alert ("Open URL for [" + p + "][" + e + "][" + n + "][" + r + "][" + o + "] at URL [" + s+"]");
-//						break;
+						if(s.length>35) {
+							// string too long... just take the first part of URL "http://xxxxx.com/" + "..."
+							$("#wc-redirect-url").text(s.substr(0, (s.indexOf("/", 25)+1))+'...');							
+						} else {
+							$("#wc-redirect-url").text(s);
+						}
+						$("#wc-popup-url").css("z-index", "3");
+						$("#wc-popup-button-ok").attr('href',s);
+						$("#wc-popup-url").show();
+						break;
                     case "call":
                     case "playAudio":
                     case "playVideo":
@@ -6063,17 +6071,25 @@
                     newTH.onclick = function () {
                         return e.onClickHome()
                     };
+					
+//					var newFeedback = document.createElement('div');
+//					newFeedback.className = 'rating-icon';
+//					newFeedback.innerHTML = 'feedback';
+//                    newFeedback.onclick = function () {
+//						$("#wc-popup-feedback").css("z-index", "4");
+//						$('#wc-popup-feedback').show();
+//                    };
+//					
                     
 					// Create Main Menu Button
                     var element = document.getElementById("start-over-menu");
                     var header_menu_element = document.getElementById("wc-header-menu-id");
                     if(element && header_menu_element==null) { 
                         element.appendChild(newTH);
+//                        element.appendChild(newFeedback);
                     }
 
-					// Create Popup Window
-
-					
+					// Create Popup Window					
                     return this.props.inputText.length > 0 && (t += " has-text"), o.createElement("div", {
                         className: t
                     }, 
