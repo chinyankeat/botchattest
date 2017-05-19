@@ -4,7 +4,13 @@
 // Show feedback after 15 seconds idle
 var feedbackIdleTime = 0;
 var idleInterval = 0;
-var feedbackTimerStarted = 0;
+var feedbackTimerStarted = 0;	
+var botInteraction = 0;	// current interactions
+
+// Popup for feedback under the following conditions 
+var feedbackPopupShown = 0;			// Has we popup dialog before? 0=no, 1=yes
+var feedbackPopupInteraction = 20;	// popup after 15 interactions
+var feedbackPopupTimer = 40;		// popup after 60 seconds idle
 $( document ).ready(function() {
     //Zero the idle timer on mouse movement.
     $(this).mousemove(function (e) {
@@ -31,6 +37,14 @@ $('#wc-popup-feedback').keypress(function(e){
 
 // Start Feedback Timer whenever there is user interaction with Bot
 function startFeedbackTimer() {
+	botInteraction++;
+	
+	if((botInteraction == feedbackPopupInteraction) && !feedbackPopupShown) {
+		feedbackPopupShown++;
+		$("#wc-popup-feedback").fadeIn(150);
+		clearInterval(idleInterval);		
+	}
+	
 	if(!feedbackTimerStarted) {	// only start feedback timer once, after user had the first interaction with bot
 		feedbackTimerStarted++;
 		//Increment the idle time counter every second.
@@ -40,9 +54,12 @@ function startFeedbackTimer() {
 
 function timerIncrement() {
     feedbackIdleTime++;
-    if (feedbackIdleTime >= 60) { // 15 seconds
-		$("#wc-popup-feedback").fadeIn(150);
-		clearInterval(idleInterval);
+    if (feedbackIdleTime >= feedbackPopupTimer) { // Popup after certain timer
+		if(!feedbackPopupShown) {
+			feedbackPopupShown++;
+			$("#wc-popup-feedback").fadeIn(150);
+			clearInterval(idleInterval);			
+		}
     }
 }
 

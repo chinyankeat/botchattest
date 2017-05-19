@@ -60,41 +60,40 @@
 				</div>
 			</div>
 		</div>
-
-       
-       
        
         <div>
             <div id="BotChatGoesHere"/>
             <div style="clear:both;"/>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="botchat.min.js"> </script>
-        <script src="digihelper.js"> </script>
-       
-        <script>
-            var now = new Date();
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+			<script src="botchat.js"> </script>
+			<script src="digihelper.js"> </script>
 
-            // display offline page, if requested to
-            <%if (process.env.OFFLINE == '1') { %>
-                window.location.replace("http://bot.digi.com.my/offline.html");
-            <% } %>
+			<script>
+				var now = new Date();
 
-            // display offline page, all the time
-            // EXCEPT display BOT in 9pm-10pm in April 2017
-            if(now.getHours()<21) {         //WHITELIST 9pm-12pm for chatbot                
-                <%if (process.env.DEVELOPMENT !== '1') { %>
-                    window.location.replace("http://new.digi.com.my/webchat");
-                <% } %>
-            }
-            // else, launch Chatbot
-            BotChat.App({
-                directLine: {
-                    token: "<%= token %>"
-                },
-                user: { id: 'Me' },
-                bot: { id: 'aura' },
-            }, document.getElementById("BotChatGoesHere"));
-        </script>
+				// display offline page, if requested to
+				<%if (process.env.OFFLINE == '1') { %>
+					window.location.replace("http://bot.digi.com.my/offline.html");
+				<% } %>
+
+				// display offline page, all the time
+				// EXCEPT display BOT in 9pm-10pm in April 2017
+				if(now.getHours()<21) {         //WHITELIST 9pm-12pm for chatbot                
+					<%if (process.env.DEVELOPMENT !== '1') { %>
+						window.location.replace("http://new.digi.com.my/webchat");
+					<% } %>
+				}
+				// else, launch Chatbot
+				BotChat.App({
+					directLine: {
+						token: "<%= token %>"
+					},
+					user: { id: 'Me' },
+					bot: { id: 'aura' },
+				}, document.getElementById("BotChatGoesHere"));
+			</script>
+		</div>
+
     </body>
 </html>
