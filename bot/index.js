@@ -61,6 +61,8 @@ var bot = new builder.UniversalBot(connector, [
 ]).set('autoBatchDelay',1000);
 // Require Functions
 bot.library(require('./validators').createLibrary());
+bot.library(require('./dialogs/uidemo').createLibrary());
+
 // start by getting API Gateway token first
 //GetSmsAuthToken();
 //GetSmsAuthToken2();
@@ -549,15 +551,13 @@ bot.dialog('Broadband', [
 
                 .buttons([
                     builder.CardAction.imBack(session, "Broadband Plans", "More")
-//                    builder.CardAction.imBack(session, "Main Menu", "Main Menu")
                 ]),
                 new builder.HeroCard(session)
                 .title('Running low on quota?')
                 .text('Get more quota now!')
                 .images([ builder.CardImage.create(session, imagedir + '/images/Broadband-LowQuota.jpg') ])
                 .buttons([
-                    builder.CardAction.openUrl(session, 'http://digi.my/mybb', 'More')
-//                    builder.CardAction.imBack(session, "Main Menu", "Main Menu")
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/broadband-home-portal', 'More')
                 ])
             ]);
         builder.Prompts.choice(session, respCards, AnyResponse, { listStyle:builder.ListStyle.button, maxRetries:MaxRetries, retryPrompt:DefaultErrorPrompt});        
@@ -996,7 +996,7 @@ bot.dialog('OtherQuestions', [
                 .title('MyDigi App')
                 .text('An app to manage all your account needs. Find out how to use it. It\'s really easy!')
                 .buttons([
-                    builder.CardAction.imBack(session, "MyDigi App", "Reqdy?")
+                    builder.CardAction.imBack(session, "MyDigi App", "Ready?")
                 ]),
                         
                 new builder.HeroCard(session)
@@ -1100,10 +1100,12 @@ bot.dialog('WhatIsMyPuk', [
                 .subtitle('Swipe left to select SIM and you will find your PUK code')
                 .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PUK-step3.png') ])
             ]);
-        builder.Prompts.choice(session, respCards, AnyResponse, { listStyle:builder.ListStyle.button, maxRetries:MaxRetries_SingleMenu, retryPrompt:DefaultErrorPrompt});
+		session.send(respCards);
+		builder.Prompts.choice(session, "Is this information helpful?", "Yes|No", { listStyle:builder.ListStyle.button, maxRetries:MaxRetries_SingleMenu, retryPrompt:DefaultErrorPrompt});
+//        builder.Prompts.choice(session, respCards, AnyResponse, { listStyle:builder.ListStyle.button, maxRetries:MaxRetries_SingleMenu, retryPrompt:DefaultErrorPrompt});
     },
     function (session, results) {
-        session.send(DefaultMaxRetryErrorPrompt)
+        session.send("Thanks for your feedback");
         session.replaceDialog('menu');
     }
 ]).triggerAction({
