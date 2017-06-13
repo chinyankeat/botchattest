@@ -21,19 +21,18 @@ $( document ).ready(function() {
     });
 });
 
-// hide popup URL window if press esc
-$('#wc-popup-url').keypress(function(e){
+$('body').keyup(function(e){
     if(e.which == 27){
-		$("#wc-popup-feedback").fadeOut(150);
+		$('#wc-popup-url').fadeOut(200);
+		$("#wc-popup-feedback").fadeOut(200);		
     }
 });
 
-// hide popup feedback window if press esc
-$('#wc-popup-feedback').keypress(function(e){
-    if(e.which == 27){
-		$("#wc-popup-feedback").fadeOut(150);
-    }
+$('body.a').on('click',function(){
+	alert("abce : " + $(this).attr('href'));
+//    $(this).attr('href', $(this).attr('href'));
 });
+
 
 // Start Feedback Timer whenever there is user interaction with Bot
 function startFeedbackTimer() {
@@ -42,7 +41,7 @@ function startFeedbackTimer() {
 	if((botInteraction == feedbackPopupInteraction) && !feedbackPopupShown) {
 		feedbackPopupShown++;
 		$("#wc-popup-feedback").fadeIn(150);
-		clearInterval(idleInterval);		
+		clearInterval(idleInterval);
 	}
 	
 	if(!feedbackTimerStarted) {	// only start feedback timer once, after user had the first interaction with bot
@@ -78,10 +77,6 @@ function submitFeedback() {
 	  "async": true,
 	  "url": "https://digibid.azurewebsites.net/action.ashx?action=json",
 	  "method": "POST",
-	  "headers": {
-		"cache-control": "no-cache",
-		"postman-token": "363b94ba-f457-55e5-89d1-a50ba8a4b1ae"
-	  },
 	  "processData": false,
 	  "contentType": false,
 	  "mimeType": "multipart/form-data",
