@@ -1369,8 +1369,15 @@ bot.dialog('Default-Fallback-Intent', [
 				session.send("Hmmm. I don't think I know that. " + 
 				"\n\nCan you try saying it in a different way? ");
 				break;
-			default:
+			case 3:
+			case 4:
+			case 5:
 				session.send("I don't understand that. Would you like to talk one of my Human Friends?");
+				session.privateConversationData[FallbackState] = 0;
+				break;
+			default:
+				session.send("I don't quite get you. " +
+							 "\n\n Can you try saying that in a different way? I might be able to help you better.");
 				session.privateConversationData[FallbackState] = 0;
 				break;
 		}
