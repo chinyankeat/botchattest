@@ -208,6 +208,25 @@ bot.dialog('YouThere', [(session)=>{
     },3000)
 }])
 
+function ComplainChannels(session) {
+	var now = new Date();
+
+	if(now.getHours()>=10 && now.getHours()<=21) {//Between 10am-9pm, show livechat button
+		session.send("* Talk to us on Twitter : \n\n https://twitter.com/mydigi \n\n"
+					 + "* Call us at the Digi Helpline: \n\n 016-2211-800"
+					 + "* Chat with us at Digi Live Chat.");
+		var respCards = new builder.HeroCard(session)
+		.buttons([
+			builder.CardAction.openUrl(session, 'new.digi.com.my/webchat', 'Live Chat')
+		]);
+		session.send(respCards);
+	} else {
+		session.send("* Talk to us on Twitter : \n\n https://twitter.com/mydigi \n\n"
+					 + "* Call us at the Digi Helpline: \n\n 016-2211-800");
+	}
+}
+
+
 // Middleware for logging all sent & received messages
 bot.use({
     receive: function (event, next) {
@@ -257,11 +276,10 @@ bot.dialog('intro', [
 		session.privateConversationData[DialogId] = session.message.address.id;
 		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 
-        session.send(" Hi, my name is Will, your Virtual Assistant. \n\n How may I help you today?");
-    },
-    function (session, results) {
-        session.send(DefaultMaxRetryErrorPrompt);
-        session.replaceDialog('menu');
+        session.send('Hi, I\'m Will, your Virtual Assistant.');
+		session.send('\n\n Ask me about plans, roaming and stuff about your 				account. eg." What is infinite?"' + 
+					 '\n\n You can restart the conversation at any time by typing "Start Over" and we\'ll start again from the top. You can also click on tips if you forget any of this.');
+		session.send('How may I help you today? ');
     }
 ]);
 
@@ -691,7 +709,7 @@ bot.dialog('Plan-Buddyz', [
 		
     }
 ]).triggerAction({
-    matches: /.*(buddyz).*|.*(buddys).*/i
+//    matches: /.*(buddyz).*|.*(buddys).*/i
 });	
 
 
@@ -880,6 +898,22 @@ bot.dialog('Plan-Broadband-100', [
     }
 ]).triggerAction({
     matches: /^(broadband 100)$/i
+});
+
+bot.dialog('Broadband-QuotaDeduction', [
+    function (session) {
+		session.send("Your internet deduction will be done based on the order below:"); 
+
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+				new builder.HeroCard(session)
+				.images([ builder.CardImage.create(session, imagedir + '/images/Broadband-QuotaDeduction.png') ])
+            ]);
+		session.send(respCards);
+	}
+]).triggerAction({
+    matches: /^.*(Broadband Quota Deduction).*/i
 });
 
 bot.dialog('Roaming-Start', [
@@ -1191,7 +1225,7 @@ bot.dialog('Plan-MonthlyBilling', [
 ]).triggerAction({
     matches: /(Monthly Billing)/i
 });
-	
+
 bot.dialog('Plan-RecommendPlanByStreaming', [
     function (session) {
 		session.privateConversationData[FallbackState] = 0;	// to reset the Fallback State (people talking rubbish)
@@ -1410,7 +1444,7 @@ bot.dialog('Default-Fallback-Intent', [
 						builder.SuggestedActions.create(
 							session,[
 								builder.CardAction.imBack(session, "Yes", "Yes"),
-								builder.CardAction.imBack(session, "No", "Yes")
+								builder.CardAction.imBack(session, "No", "No")
 							]
 						)
 					);
@@ -1426,7 +1460,7 @@ bot.dialog('Default-Fallback-Intent', [
 	,function(session, results) {
 		switch (results.response.index) {
 			case 0:	// Yes
-				session.replaceDialog('Chat-Complain');
+				ComplainChannels(session);
 				break;
 			case 1:	// No
 				session.send("Alright. Can I help you with anything else?");
@@ -1438,20 +1472,539 @@ bot.dialog('Default-Fallback-Intent', [
     }
 ]);
 
-bot.dialog('Chat-Complain', [
+bot.dialog('Start-Over', [
     function (session) {
-		session.send("I'm a little stumpe here. Maybe you can consider talking to my Human Friends. You can reach us through any of the methods below:\n\n" 
-					 + "* Talk to us on Twitter : https://twitter.com/mydigi \n\n"
-					 + "* Call us at the Digi Helpline: \n\n 016-2211-800");	
-	}
-]);
+		var request = apiai_app.textRequest("Cancel", {
+			sessionId: session.message.address.conversation.id
+		});
+		request.end();
+		session.send("Alright. Let's start over");
+    }
+]).triggerAction({
+    matches: /.*(Start Over).*/i
+});
+
+// FAQ
+bot.dialog('FAQ-Account', [
+    function (session) {
+        var respCards = new builder.Message(session)
+            .attachments([
+                new builder.HeroCard(session)
+                .text('Your account number is available on your bill at the top right hand corner. Eg: 1.356XXXX')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-Account-No.png') ])
+            ]);
+		session.send(respCards);
+    }
+]).triggerAction({
+//    matches: /.*(Account No).*|.*(Acc No).*|.*(How to get my acc no).*/i
+});
+
+bot.dialog('FAQ-PUK-Code', [
+    function (session) {
+        session.send("You can do this via the MyDigi app");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('On the MyDigi app, click on Menu')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PUK-step1.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Click on Settings')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PUK-step2.png') ]),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Swipe left to select SIM and you will find your PUK code')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PUK-step3.png') ])
+            ]);
+		session.send(respCards);
+    }
+]).triggerAction({
+//    matches: /.*(What Is My Puk).*|.*(What is my PUK code).*|.*(puk).*/i
+});
+
+bot.dialog('FAQ-How-FnF', [
+    function (session) {
+        session.send("You can check who's on your Family and Friends by following the steps below");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('On the MyDigi app, click on Menu')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-CheckFnF-step1.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Click on Settings')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-CheckFnF-step2.png') ]),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Swipe left to select \'Family & Friends\' to view your list')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-CheckFnF-step3.png') ])
+            ]);
+		session.send(respCards);
+    }
+]).triggerAction({
+//    matches: /.*(Check FnF).*|.*(check Friends & Family).*|.*(How to check F&F).*|.*(friends and family).*|.*(friend and family).*|.*(friend family).*|.*(friends family).*/i
+});
+
+
+bot.dialog('FAQ-Add-FnF', [
+    function (session) {
+        session.send("Here's how you can manageyour Family and Friends: ");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('On the MyDigi app, click on Menu.')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-AddFnF-step1.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Click on Settings')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-AddFnF-step2.png') ]),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Swipe left to select \'Family & Friends\' to view your list')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-AddFnF-step3.png') ]),
+                
+                new builder.HeroCard(session)
+                .title('Step 4')
+                .subtitle('Click on + Key in the phone number')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-AddFnF-step4.png') ])
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+//    matches: /.*(Add FnF).*|.*(Add Friends and Family).*|.*(How to add F&F).*|.*(Add Friends & Family).*/i
+});
+
+// R.4.0.6.0 - menu|OtherQuestions|AllAboutMyAccount|AllAboutMyAccount2|GoingOverseas
+bot.dialog('GoingOverseas', [
+    function (session) {
+        builder.Prompts.choice(session, "For short holidays, stay in touch by activating Roaming Services", 'Roaming', { listStyle:builder.ListStyle.button, maxRetries:MaxRetries_SingleMenu, retryPrompt:DefaultErrorPrompt});
+    },
+    function (session, results) {
+        session.replaceDialog('Roaming');
+    }
+]).triggerAction({
+//    matches: /.*(Going Overseas).*|.*(Activate Roaming).*|.*(I\'m going overseas).*/i
+});
+
+
+bot.dialog('HowToActivateVolte', [
+    function (session) {
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .subtitle("Let's check if your device is compatible. If you're sure it is, instructions for activation is right here.")
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/services/volte', 'Check'),
+                    builder.CardAction.imBack(session, "VoLTE Activation", "Activation")
+                ])
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-Activate-Volte.jpg') ])
+            ]);
+		session.send(respCards);
+    }
+]).triggerAction({
+//    matches: /.*(How to activate Volte).*|.*(How do I activate VoLTE).*|.*(volte).*/i
+});
+
+bot.dialog('ActivateVolte', [
+    function (session) {
+        session.send("You can follow the steps below");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('Select \"Settings\"'),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Select \"Mobile Data\"'),
+
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Tap on Mobile Data Options'),
+
+                new builder.HeroCard(session)
+                .title('Step 4')
+                .subtitle('Select \"Enable 4G\"'),
+
+                new builder.HeroCard(session)
+                .title('Step 5')
+                .subtitle('Choose Voice & Data to enable VoLTE')
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+//    matches: /.*(VoLTE Activation).*/i
+});
+
+// R.4.0.6.2 - menu|OtherQuestions|AllAboutMyAccount|AllAboutMyAccount2|HowToPortIn
+bot.dialog('HowToPortIn', [
+    function (session) {
+        session.send("Here are a few ways to go about it");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Digi Website')
+                .subtitle('Checkout our plans on Digi Website and once you\'ve found the right plan, select Port-in to proceed')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PortIn-Web.jpg') ])
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/prepaid-plans', 'Prepaid'),
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/postpaid-plans', 'Postpaid')
+                ]),
+                new builder.HeroCard(session)
+                .title('Digi Store')
+                .subtitle('Just drop by the nearest Digi Store and we will take care of the rest for you')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PortIn-WalkToStore.jpg') ])
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://new.digi.com.my/support/digi-store', 'Store Locator')
+                ])
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+//    matches: /.*(How to Port in).*|.*(How do I port-in).*|.*(port in).*|.*(portin).*/i
+});
+
+// R.4.1.0 - menu|OtherQuestions|MyDigiApp|GetStartedMyDigi
+bot.dialog('FAQ-Mydigi', [
+    function (session) {
+        session.send("If you have downloaded the app, sign in to the app using a Connect ID or proceed with your number. Make sure to turn on your data or this may not work!");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('MyDigi')
+                .buttons([
+                    builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download MyDigi'),
+                ])
+            ]);
+        session.send(respCards);
+    }
+]).triggerAction({
+//    matches: /.*(Get Started with MyDigi).*|.*(How do I get started with MyDigi).*/i
+});
+
+// R.4.1.1 - menu|OtherQuestions|MyDigiApp|DownloadBillFrMyDigi
+bot.dialog('FAQ-MyDigi-Download-Bill', [
+    function (session) {
+        session.send("You can do this conveniently via the MyDigi app! ");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('Click on View Details')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-DownloadBill-step1.png') ])
+
+                , new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Click on \'Download Bills\' just below the total charges')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-DownloadBill-step2.png') ])
+            ])
+			.suggestedActions(
+				builder.SuggestedActions.create(
+					session,[
+						builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download MyDigi'),
+					]
+				)
+			);
+		session.send(respCards);	
+    }        
+]).triggerAction({
+//    matches: /.*(Download Bill).*|.*(download my bill).*/i
+});
+
+// R.4.1.1.0 - menu|OtherQuestions|MyDigiApp|DownloadBillFrMyDigi|SeeBillsForPastSixMonths
+bot.dialog('SeeBillsForPastSixMonths', [
+    function (session) {
+        session.send("You can follow the steps below");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('Click on the Menu Button'),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Click on Bills'),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Click on \'More\' icon at the top right corner'),
+                    
+                new builder.HeroCard(session)
+                .title('Step 4')
+                .subtitle('Click on \'Previous Bills\''),
+
+                new builder.HeroCard(session)
+                .title('Step 5')
+                .subtitle('You can view & download your bills for the last 6 months')
+            ]);
+		session.send(respCards);		
+    }
+]).triggerAction({
+//    matches: /.*(Bills for past 6 months).*|.*(previous bill).*|.*(past bill).*/i
+});
+
+// R.4.1.2 - menu|OtherQuestions|MyDigiApp|PayForAnotherNumber
+bot.dialog('FAQ-MyDigi-Pay-For-Other', [
+    function (session) {
+        session.send("Digi Share allows you to top up and pay bills for your freinds and family on the MyDigi app!"
+					  + "\n\n You can just follow the steps below:");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('On the MyDigi app, click on Menu.')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PayForAnother-step1.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('See \'Digi Share\'? Click on it.')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PayForAnother-step2.png') ]),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('Click on \'Add a number to share\'')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PayForAnother-step3.png') ]),
+                    
+                new builder.HeroCard(session)
+                .title('Step 4')
+                .subtitle('Enter the Name and Mobile Number. Then click on Save.')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PayForAnother-step4.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 5')
+                .subtitle("Select the name of the person you would like to make payment for, key in the amount and email address. Then click on Pay Bill. That's it - all done!")
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-PayForAnother-step5.png') ]),
+            ])
+			.suggestedActions(
+				builder.SuggestedActions.create(
+					session,[
+						builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download MyDigi'),
+					]
+				)
+			);
+		session.send(respCards);	
+    }
+]).triggerAction({
+ //   matches: /.*(Pay For Another Number).*|.*(make payment for another via MyDigi).*|.*(make payment for another number).*/i
+});
+
+// R.4.2.0 - menu|OtherQuestions|TalkTimeServices|TalkTimeTransfer
+bot.dialog('FAQ-Talk-Time-Transfer', [
+    function (session) {
+        session.send("You can do a talk-time transfer with the following steps: ");        
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+                .title('Step 1')
+                .subtitle('Dial *128# from your Digi mobile, then select My Account. From the menu, select Talktime Service')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-TalkTimeTransfer-step1.png') ]),
+
+                new builder.HeroCard(session)
+                .title('Step 2')
+                .subtitle('Reply 1 to select Talktime Transfer, and then choose a transfer option. Key in the Digi mobile number you wish to send Prepaid credit to and select CALL/SEND')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-TalkTimeTransfer-step2.png') ]),
+                        
+                new builder.HeroCard(session)
+                .title('Step 3')
+                .subtitle('You will receive a confirmation text message upon successful transaction')
+                .images([ builder.CardImage.create(session, imagedir + '/images/FAQ-TalkTimeTransfer-step3.png') ]),
+            ])
+			.suggestedActions(
+				builder.SuggestedActions.create(
+					session,[
+						builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download MyDigi'),
+					]
+				)
+			);
+		session.send(respCards);	
+    }
+]).triggerAction({
+//    matches: /.*(Talk Time Transfer).*|.*(How do I do a talk-time transfer).*|.*(?=.*\btalk\b)(?=.*\btalk\b)(?=.*\btransfer\b).*$/i
+});
+
+
+// R.MyDigi.Intro
+bot.dialog('MyDigiIntro', [
+    function (session) {
+        session.send("When you start MyDigi, you will see these screens on your current usages");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+				.title("Screen 1/4")
+				.text("This page shows Balance(Prepaid plan) or Billed amount (Postpaid plan)")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Intro-Page1.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Screen 2/4")
+				.text("This page Shows total Internet quota available. Click on “View Details” to see all quota")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Intro-Page2.png') ])
+//                .CardAction.imBack(session, 'Internet Quota Details', 'View Details')
+				
+                ,new builder.HeroCard(session)
+				.title("Screen 3/4")
+				.text("Shows total voice quota available with your plan. If balance is 0, normal call rates apply")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Intro-Page3.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Screen 4/4")
+				.text("Shows total SMS available with your plan. If balance is 0, SMS rates apply")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Intro-Page4.png') ])
+				
+            ]);
+		session.send(respCards);		
+    }
+]).triggerAction({
+	// Match question with 2 words in any order: 	MyDigi + intro		MyDigi + Start 
+//    matches: /^(?=.*\bmydigi\b)(?=.*\bintro\b)|(?=.*\bmydigi\b)(?=.*\bstart\b).*$/i
+});
+
+// R.MyDigi.Intro
+bot.dialog('MyDigiNotification', [
+    function (session) {
+
+        session.send("Notifications will be sent when Freebies redeemed OR Prepaid credit balance low (<RM2) OR Prepaid validity expired OR Postpaid bill past due. Here is how you can view your notification");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+				.title("Step 1")
+				.text("At MyDigi app, click on bell icon to open notifications tab ")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Notification-Page1.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Step 2")
+				.text("To close the notification tab, click on bell icon or swipe to the right")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Notification-Page2.png') ])
+				
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+	// Match question with 2 words in any order: 	MyDigi + intro		MyDigi + Start 
+ //   matches: /^(notification)|(?=.*\bmydigi\b)(?=.*\balert\b).*$/i
+});
+
+// R.MyDigi.Intro
+bot.dialog('MyDigiBillPayment', [
+    function (session) {
+        session.send("For Postpaid users, here is how you can make Bill Payment using MyDigi");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+				.title("Step 1 of 3")
+				.text("At MyDigi app, click on Pay Bill")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Bill-Payment-Page1.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Step 2 of 3")
+				.text("On this page, enter the amount you want to pay, email address and the press Pay Bill")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Bill-Payment-Page234.png') ])
+				
+                ,new builder.HeroCard(session)
+				.title("Step 3 of 3")
+				.text("We will then bring you to payment page. Fill in payment details to complete the payment")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Bill-Payment-Page5.png') ])
+				
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+	// Match question with 2 words in any order: 	MyDigi + intro		MyDigi + Start 
+//    matches: /^(bill)|(?=.*\bmydigi\b)(?=.*\bbill\b).*$|(?=.*\bpay\b)(?=.*\bill\b).*$/i
+});
+
+// R.MyDigi.Intro
+bot.dialog('MyDigiReloadOnline', [
+    function (session) {
+ 
+        session.send("For Prepaid users, here is how you can reload using MyDigi with your Credit Card, Debit card or online banking");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+				.title("Step 1 of 4")
+				.text("At MyDigi app, click on Reload")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-Page1.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Step 2 of 4")
+				.text("Click on online, for reload with Credit Card, Debit Card or Online Banking")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-Page4.png') ])
+				
+                ,new builder.HeroCard(session)
+				.title("Step 3 of 4")
+				.text("Enter the reload amount, you email address and the press Reload")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-Page567.png') ])
+				
+                ,new builder.HeroCard(session)
+				.title("Step 4 of 4")
+				.text("We will then bring you to payment page. Fill in payment details to complete the reload")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Bill-Payment-Page5.png') ])
+				
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+	// Match question with 2 words in any order: 	MyDigi + intro		MyDigi + Start 
+//    matches: /^(?=.*\breload\b)(?=.*\bonline\b).*$|(?=.*\breload\b)(?=.*\bcredit\b)(?=.*\bcard\b).*$|(?=.*\breload\b)(?=.*\batm\b).*$|(?=.*\breload\b)(?=.*\bbank\b).*$/i
+});
+
+// R.MyDigi.Intro
+bot.dialog('MyDigiReloadPin', [
+    function (session) {
+        session.send("For Prepaid users, here is how you can reload using MyDigi with PIN or reload coupon");
+        var respCards = new builder.Message(session)
+            .attachmentLayout(builder.AttachmentLayout.carousel)
+            .attachments([
+                new builder.HeroCard(session)
+				.title("Step 1 of 3")
+				.text("At MyDigi app, click on Reload")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-Page1.png') ])
+
+                ,new builder.HeroCard(session)
+				.title("Step 2 of 3")
+				.text("Click on PIN")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-PIN-Page1.png') ])
+				
+                ,new builder.HeroCard(session)
+				.title("Step 3 of 3")
+				.text("Key in the 16 Digit PIN and press Reload")
+                .images([ builder.CardImage.create(session, imagedir + '/images/MyDigi-Reload-PIN-Page23.png') ])
+				
+            ]);
+		session.send(respCards);	
+    }
+]).triggerAction({
+	// Match question with 2 words in any order: 	MyDigi + intro		MyDigi + Start 
+//    matches: /^(?=.*\breload\b)(?=.*\bpin\b).*$|(?=.*\breload\b)(?=.*\bcoupon\b).*$/i
+});
 
 bot.dialog('printenv', [
     function (session) {
 		session.send("here are the settings: ");
 		session.send(" ♥ APP_SECRET:" + process.env.APP_SECRET +
-					" \n\n SBP_SMS_AUTHORIZATIONKEY :" + process.env.SBP_SMS_AUTHORIZATIONKEY +
-					" \n\n SBP_SMS_SENDURL :" + process.env.SBP_SMS_SENDURL +
 					" \n\n APIGW_URL:" + process.env.APIGW_URL +
 					" \n\n APIGW_SMS_AUTH_CLIENT_ID:" + process.env.APIGW_SMS_AUTH_CLIENT_ID +
 					" \n\n APIGW_SMS_AUTH_CLIENT_SECRET:" + process.env.APIGW_SMS_AUTH_CLIENT_SECRET +
@@ -1466,6 +2019,173 @@ bot.dialog('printenv', [
 ]).triggerAction({
     matches: /^(printEnv)$/
 });
+
+function ProcessApiAiResponse(session, response) {
+	console.log('API.AI response:'+ JSON.stringify(response));
+	try {
+		var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.platform=='facebook'});
+		if(jsonobject.length>0) {
+
+			// We have FB Text
+			var jsonFbText = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform=='facebook'});
+			if(jsonFbText.length>0) {
+				for(idx=0; idx<jsonFbText.length; idx++){
+					if(jsonFbText[idx].speech.length >0) {
+						var tempString = jsonFbText[idx].speech;
+						tempString.replace(/[\r\n]+/g, "\n\n");
+						session.send(tempString);
+					}
+				}								
+			}
+
+			// We have FB Card. Put all cards into carousel
+			var jsonFbCard = response.result.fulfillment.messages.filter(value=> {return value.type==1 && value.platform=='facebook'});
+			if(jsonFbCard.length>0) {
+				var CardAttachments = [];
+				for(idx=0; idx<jsonFbCard.length; idx++){
+					var CardButtons = [];
+					if(jsonFbCard[idx].buttons) {
+						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
+							// Check if quick reply is it HTTP or normal string
+							wwwLocation = jsonFbCard[idx].buttons[idxButton].postback.search("www");
+							if(wwwLocation>=0){
+								httpLocation = jsonFbCard[idx].buttons[idxButton].postback.search("http");
+								if(httpLocation>=0) {
+									// URL includes http://
+									CardButtons.push(
+										builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
+								} else {
+									// URL DOES NOT includes http://
+									CardButtons.push(
+										builder.CardAction.openUrl(session, "http://"+jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
+								}
+							} else {
+								// Button is normal imBack
+								CardButtons.push(
+									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
+							}
+						}
+					}
+					CardAttachments.push(
+						new builder.HeroCard(session)
+						.title(jsonFbCard[idx].title)
+						.text(jsonFbCard[idx].subtitle)
+						.images([ builder.CardImage.create(session, jsonFbCard[idx].imageUrl) ])
+						.buttons(CardButtons)
+					);									
+				}
+				var respCards = new builder.Message(session)
+					.attachmentLayout(builder.AttachmentLayout.carousel)
+					.attachments(CardAttachments);
+				session.send(respCards);
+			}
+
+			// we have Facebook Quick Reply. Put as quickreply							
+			var jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==2 && value.platform=='facebook'});
+			if(jsonFbQuickReply.length>0) {
+				var QuickReplyButtons = [];
+				for(idx=0; idx<jsonFbQuickReply.length; idx++){
+					var QuickReplyTitleUsedAsUrl = 0;
+					for (idxQuickReply=0; idxQuickReply<jsonFbQuickReply[idx].replies.length; idxQuickReply++) {
+						// Check if quick reply is it HTTP or normal string
+						wwwLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search("www");
+						if(wwwLocation>=0){
+							QuickReplyTitleUsedAsUrl = 1;
+							httpLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search("http");
+							if(httpLocation>=0) {
+								// URL includes http://
+								QuickReplyButtons.push(
+									builder.CardAction.openUrl(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].title));
+							} else {
+								// URL DOES NOT includes http://
+								QuickReplyButtons.push(
+									builder.CardAction.openUrl(session, "http://"+jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].title));
+							}
+						} else {
+							QuickReplyButtons.push(
+								builder.CardAction.imBack(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].replies[idxQuickReply]));
+						}
+					}
+				}
+				var respCards;
+				if(QuickReplyTitleUsedAsUrl) {
+					respCards = new builder.Message(session)
+						.text(jsonFbQuickReply[0].title)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+				} else {
+					respCards = new builder.Message(session)
+						.text(jsonFbQuickReply[idx].title)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+				}
+				session.send(respCards);
+			}
+		} else {
+			// No Facebook Message. we only have normal message. output only normal string
+			// Print out each individual Messages
+			var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
+			if(jsonObjectMsg) {
+				for(idx=0; idx<jsonObjectMsg.length; idx++) {
+console.log('API.AI response:'+ jsonObjectMsg[idx].speech);
+					if(jsonObjectMsg[idx].speech.length >0) {
+						session.send(jsonObjectMsg[idx].speech);
+					}
+				}
+			}
+		}
+	} catch (e) {
+		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
+	}	
+}
+
+function ProcessApiAiAndAddButton(session, response) {
+	try {
+		// Print out each individual Messages
+		var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
+		if(jsonObjectMsg) {
+			for(idx=0; idx<(jsonObjectMsg.length-1); idx++) {
+				if(jsonObjectMsg[idx].speech.length >0) {
+					var tempString = jsonObjectMsg[idx].speech;
+					tempString.replace(/[\r\n]+/g, "\n\n");
+					session.send(tempString);
+				}
+			}
+			// Last Message, add in button, either Download MyDigi / Go to Store
+			if(jsonObjectMsg[jsonObjectMsg.length-1].speech.search("MyDigi")>=0) {
+				var respCards = new builder.Message(session)
+					.text(jsonObjectMsg[jsonObjectMsg.length-1].speech)
+					.suggestedActions(
+						builder.SuggestedActions.create(
+							session,[
+								builder.CardAction.openUrl(session, 'http://appurl.io/j1801ncp', 'Download MyDigi'),
+							]
+						)
+					);
+				session.send(respCards);				
+			} else {
+				var respCards = new builder.Message(session)
+					.text(jsonObjectMsg[jsonObjectMsg.length-1].speech)
+					.suggestedActions(
+						builder.SuggestedActions.create(
+							session,[
+								builder.CardAction.openUrl(session, 'http://new.digi.com.my/support/digi-store', 'Find a store'),
+							]
+						)
+					);
+				session.send(respCards);				
+			}
+		}
+	} catch (e) {
+		console.log("ProcessApiAiAndAddButton Error: [" + JSON.stringify(response.result) + ']');
+	}	
+}
 
 bot.dialog('CatchAll', [
     function (session) {
@@ -1485,80 +2205,101 @@ bot.dialog('CatchAll', [
 				if(response.result.action==undefined){
 					session.send("Let's get back to our chat on Digi");
 				} else {		// We have response from API.AI
-					console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');
-					
+//					console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');
+
 					logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
 									"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
-						//console.log('API.AI response text:'+ response.result.fulfillment.speech);
-						//console.log('API.AI response:'+ JSON.stringify(response.result));
+					//console.log('API.AI response text:'+ response.result.fulfillment.speech);
+					//console.log('API.AI response:'+ JSON.stringify(response.result));
 
 					// Flow when API.ai returns
 					// 1) Try to call the intent & pass the JSON to the intent 
 					// 2) If intent not exist, check if there is fulfillment speech and display that default speech
 					// 3) If fulfillment speech does not exist, display default "Let's get back to our chat on Digi" 
-					try {						
+					try {
+						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName +"]");
 						switch (response.result.metadata.intentName) {
 							case 'Default-Unknown':
 							case 'Default-Fallback-Intent':
 							case 'Roaming-General':
 								session.privateConversationData[FallbackState]++;
+								session.replaceDialog(response.result.metadata.intentName, response);
 								break;
+							case 'Chat-smile':
+							case 'Chat-Compliment':
+							case 'Chat-Thanks':
+								session.privateConversationData[FallbackState] = 0;
+								ProcessApiAiAndAddButton(session,response);
+								break;
+							case 'Chat-Complain':
+							case 'Chat-Helpline':
+								session.privateConversationData[FallbackState] = 0;
+								ProcessApiAiResponse(session,response);
+								ComplainChannels(session);
+								break;
+							//case 'Broadband-QuotaDeduction':
+							case 'Broadband-StreamFree':
+							case 'Broadband-StreamOnDemand':
+							case 'Broadband-VoIPCall':
+							case 'Chat-Greetings':
+							case 'Chat-help':	// Help on using chatbot
+							case 'Chat-Ok':
+							case 'Chat-Rude':
+							case 'Default Welcome Intent':
+							case 'Default-Fallback-Intent':
+							case 'Default-Unknown':
+							case 'FAQ-1300-1800-Numbers':
+							case 'FAQ-Account':
+							case 'FAQ-Account-Change':
+							case 'FAQ-Add-FnF':
+							case 'FAQ-Bill-Payment':  
+							case 'FAQ-Buddyz-Charge':
+							case 'FAQ-Change-Billing-Cycle':
+							case 'FAQ-Connect-ID':
+							case 'FAQ-How-FnF':
+							case 'FAQ-Minimum-Topup':
+							case 'FAQ-Mydigi':
+							case 'FAQ-MyDigi-Download-Bill':
+							case 'FAQ-MyDigi-Pay-For-Other':
+							case 'FAQ-PUK-Code':
+							case 'FAQ-Talk-Time-Transfer':
+							case 'Find-A-Store':
+							//case 'IDD-CallFail':
+							case 'Plan-Cheapest-BestValue':
+							case 'Plan-Fastest':
+							case 'Plan-HighTier-Over100':
+							case 'Plan-MinimumReload':
+							case 'Plan-MonthlyBilling':
+							case 'Plan-PayAsYouGo':
+							case 'Plan-Prepaid-Expire':
+							//case 'Plan-Recommendation':
+							case 'Plan-RecommendPlanBySocialMedia':
+							case 'Plan-RecommendPlanByStreaming':
+							case 'Plan-SpecialNumber':
+							case 'Roaming-ActivateForOthers':
+							case 'Roaming-ActivateWhileAbroad':
+							case 'Roaming-CallFromOverseas':
+							//case 'Roaming-CallHome':
+							case 'Roaming-General':
+							case 'Roaming-IncreaseCreditLimit':
+							//case 'Roaming-RoamLikeHome':
+							case 'Roaming-SharingData':
+							//case 'Roaming-Start':
+							case 'Roaming-Status':
+							case 'Tips':
+								session.privateConversationData[FallbackState] = 0;
+								ProcessApiAiResponse(session, response);
+								break;							
 							default:
 								session.privateConversationData[FallbackState] = 0;
+								session.replaceDialog(response.result.metadata.intentName, response);
 								break;
 						}
-						session.replaceDialog(response.result.metadata.intentName, response);
 						return;
 					} catch (e) {
-						console.log("Fallback due to Unknown API.ai Intent [" + response.result.metadata.intentName + ']');
-						if(response.result.fulfillment.speech.length>0) {
-							session.send(response.result.fulfillment.speech);
-
-							// Check out Quick Replies for Facebook
-							var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.type==2 &&
-																							value.platform=='facebook'})[0];
-							if(jsonobject) {
-								if(jsonobject.replies.length == 1){
-									var respCards = new builder.Message(session)
-										.text(jsonobject.title)
-										.suggestedActions(
-											builder.SuggestedActions.create(
-												session,[
-													builder.CardAction.imBack(session, jsonobject.replies[0], jsonobject.replies[0])
-												]
-											)
-										);
-									session.send(respCards);
-								} else if(jsonobject.replies.length == 2){
-									var respCards = new builder.Message(session)
-										.text(jsonobject.title)
-										.suggestedActions(
-											builder.SuggestedActions.create(
-												session,[
-													builder.CardAction.imBack(session, jsonobject.replies[0], jsonobject.replies[0]),
-													builder.CardAction.imBack(session, jsonobject.replies[1], jsonobject.replies[1])
-												]
-											)
-										);
-									session.send(respCards);
-								} else if(jsonobject.replies.length > 2){
-									var respCards = new builder.Message(session)
-										.text(jsonobject.title)
-										.suggestedActions(
-											builder.SuggestedActions.create(
-												session,[
-													builder.CardAction.imBack(session, jsonobject.replies[0], jsonobject.replies[0]),
-													builder.CardAction.imBack(session, jsonobject.replies[1], jsonobject.replies[1]),
-													builder.CardAction.imBack(session, jsonobject.replies[2], jsonobject.replies[2])
-												]
-											)
-										);
-									session.send(respCards);
-								}
-							}
-						} else {
-							session.send("Let's get back to our chat on Digi");
-						}
+						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName + ']');
+						//console.log("CatchAll: object [" + JSON.stringify(response.result) + ']');
+						ProcessApiAiResponse(session, response);
 					}
 				}
 			});
