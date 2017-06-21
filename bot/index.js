@@ -228,6 +228,8 @@ bot.dialog('YouThere', [(session)=>{
 
 function ComplainChannels(session) {
 	var now = new Date();
+	currentTime = now.getHours()+8; // offset with GMT
+session.send("time now is " + now.getHours());
 
 	if(now.getHours()>=10 && now.getHours()<=21) {//Between 10am-9pm, show livechat button
 		session.send("* Talk to us on Twitter : \n\n https://twitter.com/mydigi \n\n"
