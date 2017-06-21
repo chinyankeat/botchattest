@@ -240,7 +240,7 @@ function ComplainChannels(session) {
                 new builder.HeroCard(session)
 				.title("Live Chat")
 				.buttons([
-					builder.CardAction.openUrl(session, 'new.digi.com.my/webchat', 'Start Live Chat')
+					builder.CardAction.openUrl(session, 'http://new.digi.com.my/webchat', 'Start Live Chat')
 				])
 					
             ]);
@@ -2071,18 +2071,11 @@ function ProcessApiAiResponse(session, response) {
 					if(jsonFbCard[idx].buttons) {
 						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
 							// Check if quick reply is it HTTP or normal string
-							wwwLocation = jsonFbCard[idx].buttons[idxButton].postback.search("www");
+							wwwLocation = jsonFbCard[idx].buttons[idxButton].postback.search("http");
 							if(wwwLocation>=0){
-								httpLocation = jsonFbCard[idx].buttons[idxButton].postback.search("http");
-								if(httpLocation>=0) {
-									// URL includes http://
-									CardButtons.push(
-										builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
-								} else {
-									// URL DOES NOT includes http://
-									CardButtons.push(
-										builder.CardAction.openUrl(session, "http://"+jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
-								}
+								// URL includes http://
+								CardButtons.push(
+									builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
 							} else {
 								// Button is normal imBack
 								CardButtons.push(
@@ -2115,6 +2108,7 @@ function ProcessApiAiResponse(session, response) {
 						var urlLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search('-L');
 						var urlTitle = jsonFbQuickReply[idx].replies[idxQuickReply].substring(0,urlLocation);
 						var urlString = "";
+						var wwwLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search("http");
 						
 						// Add in our predetermined URL
 						if(urlLocation>=0) {
@@ -2125,6 +2119,11 @@ function ProcessApiAiResponse(session, response) {
 								QuickReplyButtons.push(
 									builder.CardAction.openUrl(session, urlString, urlTitle));
 							}
+						} else if (wwwLocation>=0){
+							// URL includes http://
+							CardButtons.push(
+								builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));							
+							
 						} else {
 							QuickReplyButtons.push(
 								builder.CardAction.imBack(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].replies[idxQuickReply]));
