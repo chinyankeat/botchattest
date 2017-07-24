@@ -283,10 +283,6 @@ bot.dialog('intro', [
 		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
 
-        session.send('Hi, I\'m Will, your Digi Virtual Assistant.');
-		session.send('Ask me about plans, roaming and stuff about your account. eg."*What is infinite?*"');
-		session.send('How may I help you today? ');
-		
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
