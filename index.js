@@ -31,8 +31,6 @@ app.get('/', (req, res) => {
 	///////////////////////////////////////////////////
 	// code for load test
 	ejs_1.renderFile("./index-loadtest.ejs", {
-		token,
-		secret: req.cookies.settings && req.cookies.settings.secret
 	}, (err, str) => {
 		if (err)
 			console.log("ejs error", err);
