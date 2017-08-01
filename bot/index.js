@@ -286,6 +286,7 @@ bot.dialog('intro', [
 		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
 		session.privateConversationData[ApiAiQuickReply] = 0;		// store Api.ai Quick Reply Payload
+		test = session.privateConversationData[ApiAiQuickReply];		// store Api.ai Quick Reply Payload
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
@@ -973,8 +974,6 @@ function ProcessApiAiResponse(session, response) {
 					}
 
 					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
-session.send("test" + session.message.address.conversation.id);
-session.send("test" + session.message.address.conversation.id + session.privateConversationData[ApiAiQuickReply]);
 
 					var respCards = new builder.Message(session)
 						.text(QuickReplyText)
@@ -1053,9 +1052,6 @@ bot.dialog('CatchAll', [
     function (session) {
 		// Reset any conversation state
 		session.privateConversationData[PlanRecommendState] = 0;
-session.send("test123");
-session.send("test" + session.message.address.conversation.id);
-session.send("test" + session.message.address.conversation.id + session.privateConversationData[ApiAiQuickReply]);
 		
 		if (apiai_error_timeout < Date.now()) {
 			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
@@ -1063,32 +1059,20 @@ session.send("test" + session.message.address.conversation.id + session.privateC
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
 			var request = 0;
-session.send("test123c");
-session.send(session.privateConversationData[ApiAiQuickReply]);
-session.send("test123d");
 			if(session.privateConversationData[ApiAiQuickReply] != 0) {
-session.send("test123e");
 				var FoundQuickReply = 0;
-session.send("test123f");
 				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
 				var res = thisstring.split("|");
-session.send("test123g");
 				session.privateConversationData[ApiAiQuickReply] = 0;
-session.send("test123h");
 				
 				for(idx=0; idx<res.length; idx++) {
-session.send("test123i");
 					if(res[idx].search(session.message.text)>=0) {
-session.send("test123j");
 						var CurrentQuickReply = res[idx].split(",");
-session.send("test123k");
 						request = apiai_app.textRequest(CurrentQuickReply[1], {
 							sessionId: session.message.address.conversation.id
 						});
-session.send("test123l");
 						request.end();
 						FoundQuickReply = 1;
-session.send("found1");
 					}
 				}
 				
@@ -1097,15 +1081,13 @@ session.send("found1");
 					request = apiai_app.textRequest(session.message.text, {
 						sessionId: session.message.address.conversation.id
 					});
-					request.end();				
-session.send("found2");
+					request.end();
 				}
 			} else {
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
 				request.end();				
-session.send("found3");
 			}
 
 			request.on('response', function(response) {
