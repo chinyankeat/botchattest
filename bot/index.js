@@ -1051,6 +1051,7 @@ bot.dialog('CatchAll', [
     function (session) {
 		// Reset any conversation state
 		session.privateConversationData[PlanRecommendState] = 0;
+session.send("test123");
 		
 		if (apiai_error_timeout < Date.now()) {
 			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
