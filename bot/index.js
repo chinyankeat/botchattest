@@ -45,6 +45,7 @@ var FallbackState = 'FallbackState';
 var PlanRecommendState = 'PlanRecommendState';
 var FeedbackIntent = 'FeedbackIntent';
 var ResponseTime = 'ResponseTime';
+var ApiAiQuickReply = 'ApiAiQuickReply';
 var Recommending = 1;
 var RecommendPrepaidBest = 10;
 var RecommendPrepaidLive = 11;
@@ -216,7 +217,6 @@ bot.use({
 	// we receive message here
 	botbuilder: function (session, next) {
 		session.privateConversationData[ResponseTime] = Date.now();
-console.log("user typed something " + Date.now());
 		next();
 	},	
 	// we receive message here
@@ -278,11 +278,14 @@ function LogResponseTime(session) {
 bot.dialog('intro', [
     function (session) {
         // Initialize Session Data
+		if(session.message==null) {
+			session.message = 0;
+		}
 		session.privateConversationData[PlanRecommendState] = 0;	// are we recommending something?
 		session.privateConversationData[DialogId] = session.message.address.id;
 		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
-
+		session.privateConversationData[ApiAiQuickReply] = "";		// store Api.ai Quick Reply Payload
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
@@ -312,103 +315,6 @@ bot.dialog('logging-off', [
     matches: /^(chinyankeat off)$/i
 });
 
-
-bot.dialog('getFeedbackPlan', [
-//    function (session) {
-//		var respCards = new builder.Message(session)
-//			.text("Was I able to help you?")
-//			.suggestedActions(
-//				builder.SuggestedActions.create(
-//					session,[
-//						builder.CardAction.imBack(session, "Yes", "Yes"),
-//						builder.CardAction.imBack(session, "No", "No")
-//					]
-//				)
-//			);
-//        builder.Prompts.choice(session, respCards, "Yes|No");
-//	}
-//	,function(session, results) {
-//		var PlanRecommended = "";
-//		switch (session.privateConversationData[PlanRecommendState]) {
-//			case RecommendPrepaidBest: 
-//				PlanRecommended = "Recommend Prepaid Best";
-//				break;
-//			case RecommendPrepaidLive:
-//				PlanRecommended = "Recommend Prepaid Live";
-//				break;
-//			case RecommendPostpaidInfinite:
-//				PlanRecommended = "Recommend Postpaid Infinite 150";
-//				break;
-//			case RecommendPostpaid110:
-//				PlanRecommended = "Recommend Postpaid 110";
-//				break;
-//			case RecommendPostpaid80:
-//				PlanRecommended = "Recommend Postpaid 80";
-//				break;
-//			case RecommendPostpaid50:
-//				PlanRecommended = "Recommend Postpaid 50";
-//				break;
-//			case RecommendPostpaidInfinite110:
-//				PlanRecommended = "Recommend Postpaid Infinite & Postpaid 110";
-//				break;
-//			case RecommendPostpaidSocialMedia:
-//			default:
-//				break;
-//		}
-//		
-//		switch (results.response.index) {
-//			case 0:	// Yes
-//				logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
-//								"Feedback"/*Dialog Type*/, PlanRecommended/*Dialog Input*/,"Yes");
-//				session.send("Always good to know :D");
-//
-//				// Add in tips after yes / no
-//				var request = apiai_app.textRequest("Tips", {
-//					sessionId: session.message.address.conversation.id
-//				});
-//				request.end();
-//				request.on('response', function(response) {
-//					ProcessApiAiResponse(session, response);
-//				});
-//
-//				break;
-//			case 1:	// No
-//				logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
-//								"Feedback"/*Dialog Type*/, PlanRecommended/*Dialog Input*/,"No");
-//				var respCards = new builder.Message(session)
-//					.text("Would you like to try again?")
-//					.suggestedActions(
-//						builder.SuggestedActions.create(
-//							session,[
-//								builder.CardAction.imBack(session, "Yes", "Yes"),
-//								builder.CardAction.imBack(session, "No", "No")
-//							]
-//						)
-//					);
-//				builder.Prompts.choice(session, respCards, "Yes|No");
-//				break;
-//			default:
-//				break;
-//		}
-//    }
-//	,function(session, results) {
-//		switch (results.response.index) {
-//			case 0:	// Yes
-//				if (session.privateConversationData[PlanRecommendState]) {
-//					session.replaceDialog('Plan-Recommendation');
-//				}
-//				break;
-//			case 1:	// No
-//				session.send("Alright. Can I help you with anything else?");
-//				session.endDialog();
-//				break;
-//			default:
-//				break;
-//		}			
-//    }
-]).triggerAction({
-    matches: /(getFeedbackPlan)/i
-});
 
 bot.dialog('getFeedbackGeneral', [
 //    function (session) {
@@ -530,7 +436,6 @@ bot.dialog('Plan-PayAsYouGo', [
 					return;
 			}
 		}
-//		session.replaceDialog('getFeedbackPlan');
     }
 ]).triggerAction({
     matches: /(Pay as you go)/i
@@ -626,7 +531,6 @@ bot.dialog('Plan-MonthlyBilling', [
 					return;
 			}
 		}
-//		session.replaceDialog('getFeedbackPlan');
     }
 ]).triggerAction({
     matches: /(Monthly Billing)/i
@@ -675,7 +579,6 @@ bot.dialog('Plan-RecommendPlanByStreaming', [
 				session.replaceDialog('Plan-RecommendPlanBySocialMedia');
 				return;
 		}
-//		session.replaceDialog('getFeedbackPlan');
     }
 ]);
 	
@@ -732,7 +635,6 @@ bot.dialog('Plan-RecommendPlanBySocialMedia', [
 					break;
 			}
 		}
-//		session.replaceDialog('getFeedbackPlan');
     }
 ]);
 
@@ -913,6 +815,7 @@ bot.dialog('printenv', [
 });
 
 function ProcessApiAiResponse(session, response) {
+	
 	if(DebugLoggingOn) {
 		console.log('API.AI response:'+ JSON.stringify(response));
 	}
@@ -927,7 +830,7 @@ function ProcessApiAiResponse(session, response) {
 					if(jsonFbText[idx].speech.length >0) {
 						session.send(jsonFbText[idx].speech);
 					}
-				}								
+				}
 			}
 
 			// We have FB Card. Put all cards into carousel
@@ -1037,6 +940,55 @@ function ProcessApiAiResponse(session, response) {
 				session.send(respCards);
 			}
 			
+		} else if (response.result.fulfillment.data != null){
+			// This block of text is for API.ai webhook Facebook messages
+			// we need to store payload for each content
+			if(response.result.fulfillment.data.facebook != null) {
+				
+				if(response.result.fulfillment.data.facebook.quick_replies.length > 0) {
+					var ApiAiQuickReplyTextPayload = "";
+
+					var QuickReplyText = response.result.fulfillment.data.facebook.text;
+					var QuickReplyButtons = [];
+					
+					for(idx=0; idx<response.result.fulfillment.data.facebook.quick_replies.length; idx++) {
+						console.log(" test" + response.result.fulfillment.data.facebook.quick_replies[idx].title + response.result.fulfillment.data.facebook.quick_replies[idx].payload);
+
+						var QuickReplyTitle = response.result.fulfillment.data.facebook.quick_replies[idx].title;
+						var QuickReplyPayload = response.result.fulfillment.data.facebook.quick_replies[idx].payload;
+						
+						var wwwLocation = response.result.fulfillment.data.facebook.quick_replies[idx].payload.search("http");
+						if (wwwLocation>=0){
+							// URL includes http://
+							QuickReplyButtons.push(
+								builder.CardAction.openUrl(session, QuickReplyPayload, QuickReplyTitle));							
+						} else {
+							QuickReplyButtons.push(
+								builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
+						}
+						if(ApiAiQuickReplyTextPayload.length>0) {
+							ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ',' + QuickReplyPayload;
+						} else {
+							ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
+						}
+
+					}
+
+					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+
+					var respCards = new builder.Message(session)
+						.text(QuickReplyText)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+					session.send(respCards);					
+					
+				} else {
+					session.send(response.result.fulfillment.data.facebook.text);
+				}
+			}
 		} else {
 			// No Facebook Message. we only have normal message. output only normal string
 			// Print out each individual Messages
@@ -1106,10 +1058,38 @@ bot.dialog('CatchAll', [
 			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
 						
 			// send the request to API.ai
-			var request = apiai_app.textRequest(session.message.text, {
-				sessionId: session.message.address.conversation.id
-			});
-			request.end();
+			// Senc request to API.ai using quickreply payload if we have it
+			var request;
+			if(session.privateConversationData[ApiAiQuickReply].length>0) {
+				var FoundQuickReply = 0;
+				var res = session.privateConversationData[ApiAiQuickReply].split("|");
+				session.privateConversationData[ApiAiQuickReply] = "";
+				
+				for(idx=0; idx<res.length; idx++) {
+					if(res[idx].search(session.message.text)>=0) {
+						var CurrentQuickReply = res[idx].split(",");
+						console.log("sending to api.ai " + CurrentQuickReply[1]);
+						request = apiai_app.textRequest(CurrentQuickReply[1], {
+							sessionId: session.message.address.conversation.id
+						});
+						request.end();
+						FoundQuickReply = 1;
+					}
+				}
+				
+				// we cannot find the quickreply. Send the custom text
+				if(FoundQuickReply==0) {
+					request = apiai_app.textRequest(session.message.text, {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();				
+				}
+			} else {
+				request = apiai_app.textRequest(session.message.text, {
+					sessionId: session.message.address.conversation.id
+				});
+				request.end();				
+			}
 
 			request.on('response', function(response) {
 				if(response.result.action==undefined){
