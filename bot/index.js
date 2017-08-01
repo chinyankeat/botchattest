@@ -952,7 +952,6 @@ function ProcessApiAiResponse(session, response) {
 					var QuickReplyButtons = [];
 					
 					for(idx=0; idx<response.result.fulfillment.data.facebook.quick_replies.length; idx++) {
-						console.log(" test" + response.result.fulfillment.data.facebook.quick_replies[idx].title + response.result.fulfillment.data.facebook.quick_replies[idx].payload);
 
 						var QuickReplyTitle = response.result.fulfillment.data.facebook.quick_replies[idx].title;
 						var QuickReplyPayload = response.result.fulfillment.data.facebook.quick_replies[idx].payload;
@@ -1068,7 +1067,6 @@ bot.dialog('CatchAll', [
 				for(idx=0; idx<res.length; idx++) {
 					if(res[idx].search(session.message.text)>=0) {
 						var CurrentQuickReply = res[idx].split(",");
-						console.log("sending to api.ai " + CurrentQuickReply[1]);
 						request = apiai_app.textRequest(CurrentQuickReply[1], {
 							sessionId: session.message.address.conversation.id
 						});
