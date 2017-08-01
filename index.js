@@ -30,31 +30,31 @@ app.get('/', (req, res) => {
     const auth = 'Bearer';
 	///////////////////////////////////////////////////
 	// code for load test
-	ejs_1.renderFile("./index-loadtest.ejs", {
-	}, (err, str) => {
-		if (err)
-			console.log("ejs error", err);
-		else
-			res.send(str);
-	});
+//	ejs_1.renderFile("./index-loadtest.ejs", {
+//	}, (err, str) => {
+//		if (err)
+//			console.log("ejs error", err);
+//		else
+//			res.send(str);
+//	});
 	///////////////////////////////////////////////////
 	
-//    fetch(endpoint, {
-//        method: 'POST',
-//        headers: { Authorization: `${auth} ${appSecret}`, Accept: "application/json" }
-//    }).then(response => response.json()).then(result => {
-//        const token = result["token"];
-//        console.log("token", token, "retrieved at", new Date());
-//        ejs_1.renderFile("./index-loadtest.ejs", {
-//            token,
-//            secret: req.cookies.settings && req.cookies.settings.secret
-//        }, (err, str) => {
-//            if (err)
-//                console.log("ejs error", err);
-//            else
-//                res.send(str);
-//        });
-//    });
+    fetch(endpoint, {
+        method: 'POST',
+        headers: { Authorization: `${auth} ${appSecret}`, Accept: "application/json" }
+    }).then(response => response.json()).then(result => {
+        const token = result["token"];
+        console.log("token", token, "retrieved at", new Date());
+        ejs_1.renderFile("./index-loadtest.ejs", {
+            token,
+            secret: req.cookies.settings && req.cookies.settings.secret
+        }, (err, str) => {
+            if (err)
+                console.log("ejs error", err);
+            else
+                res.send(str);
+        });
+    });
 });
 
 // Register Bot
