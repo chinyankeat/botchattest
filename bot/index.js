@@ -1063,16 +1063,24 @@ session.send("test123c");
 session.send(session.privateConversationData[ApiAiQuickReply]);
 session.send("test123d");
 			if(session.privateConversationData[ApiAiQuickReply] != 0) {
+session.send("test123e");
 				var FoundQuickReply = 0;
+session.send("test123f");
 				var res = session.privateConversationData[ApiAiQuickReply].split("|");
+session.send("test123g");
 				session.privateConversationData[ApiAiQuickReply] = 0;
+session.send("test123h");
 				
 				for(idx=0; idx<res.length; idx++) {
+session.send("test123i");
 					if(res[idx].search(session.message.text)>=0) {
+session.send("test123j");
 						var CurrentQuickReply = res[idx].split(",");
+session.send("test123k");
 						request = apiai_app.textRequest(CurrentQuickReply[1], {
 							sessionId: session.message.address.conversation.id
 						});
+session.send("test123l");
 						request.end();
 						FoundQuickReply = 1;
 session.send("found1");
