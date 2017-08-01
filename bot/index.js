@@ -1058,6 +1058,7 @@ bot.dialog('CatchAll', [
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
 			var request;
+session.send(session.privateConversationData[ApiAiQuickReply]);
 			if(session.privateConversationData[ApiAiQuickReply] != 0) {
 				var FoundQuickReply = 0;
 				var res = session.privateConversationData[ApiAiQuickReply].split("|");
@@ -1071,6 +1072,7 @@ bot.dialog('CatchAll', [
 						});
 						request.end();
 						FoundQuickReply = 1;
+session.send("found1");
 					}
 				}
 				
@@ -1080,12 +1082,14 @@ bot.dialog('CatchAll', [
 						sessionId: session.message.address.conversation.id
 					});
 					request.end();				
+session.send("found2");
 				}
 			} else {
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
 				request.end();				
+session.send("found3");
 			}
 
 			request.on('response', function(response) {
