@@ -972,9 +972,9 @@ function ProcessApiAiResponse(session, response) {
 						}
 					}
 
-session.send("test" + session);
-session.send("test" + session + session.privateConversationData[ApiAiQuickReply]);
 					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+session.send("test" + session.message.address.conversation.id);
+session.send("test" + session.message.address.conversation.id + session.privateConversationData[ApiAiQuickReply]);
 
 					var respCards = new builder.Message(session)
 						.text(QuickReplyText)
@@ -1054,8 +1054,8 @@ bot.dialog('CatchAll', [
 		// Reset any conversation state
 		session.privateConversationData[PlanRecommendState] = 0;
 session.send("test123");
-session.send("test" + session);
-session.send("test" + session + session.privateConversationData[ApiAiQuickReply]);
+session.send("test" + session.message.address.conversation.id);
+session.send("test" + session.message.address.conversation.id + session.privateConversationData[ApiAiQuickReply]);
 		
 		if (apiai_error_timeout < Date.now()) {
 			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
