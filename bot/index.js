@@ -970,7 +970,6 @@ function ProcessApiAiResponse(session, response) {
 						} else {
 							ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
 						}
-
 					}
 
 					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
@@ -1059,6 +1058,8 @@ bot.dialog('CatchAll', [
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
 			var request;
+session.send(session.privateConversationData[ApiAiQuickReply]);
+session.send(session.privateConversationData[ApiAiQuickReply].length);
 			if(session.privateConversationData[ApiAiQuickReply].length>0) {
 				var FoundQuickReply = 0;
 				var res = session.privateConversationData[ApiAiQuickReply].split("|");
@@ -1077,6 +1078,7 @@ bot.dialog('CatchAll', [
 				
 				// we cannot find the quickreply. Send the custom text
 				if(FoundQuickReply==0) {
+session.send("test2");
 					request = apiai_app.textRequest(session.message.text, {
 						sessionId: session.message.address.conversation.id
 					});
