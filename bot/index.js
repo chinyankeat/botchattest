@@ -1058,10 +1058,10 @@ session.send("test123");
 						
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
-session.send("test123b");
 			var request = 0;
 session.send("test123c");
 session.send(session.privateConversationData[ApiAiQuickReply]);
+session.send("test123d");
 			if(session.privateConversationData[ApiAiQuickReply] != 0) {
 				var FoundQuickReply = 0;
 				var res = session.privateConversationData[ApiAiQuickReply].split("|");
