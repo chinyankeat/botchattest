@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
     }).then(response => response.json()).then(result => {
         const token = result["token"];
         console.log("token", token, "retrieved at", new Date());
-        ejs_1.renderFile("./index-loadtest.ejs", {
+        ejs_1.renderFile("./index.ejs", {
             token,
             secret: req.cookies.settings && req.cookies.settings.secret
         }, (err, str) => {
