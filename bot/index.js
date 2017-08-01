@@ -285,7 +285,7 @@ bot.dialog('intro', [
 		session.privateConversationData[DialogId] = session.message.address.id;
 		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
-		session.privateConversationData[ApiAiQuickReply] = "";		// store Api.ai Quick Reply Payload
+		session.privateConversationData[ApiAiQuickReply] = 0;		// store Api.ai Quick Reply Payload
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
@@ -1058,12 +1058,10 @@ bot.dialog('CatchAll', [
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
 			var request;
-session.send(session.privateConversationData[ApiAiQuickReply]);
-session.send(session.privateConversationData[ApiAiQuickReply].length);
-			if(session.privateConversationData[ApiAiQuickReply].length>0) {
+			if(session.privateConversationData[ApiAiQuickReply] != 0) {
 				var FoundQuickReply = 0;
 				var res = session.privateConversationData[ApiAiQuickReply].split("|");
-				session.privateConversationData[ApiAiQuickReply] = "";
+				session.privateConversationData[ApiAiQuickReply] = 0;
 				
 				for(idx=0; idx<res.length; idx++) {
 					if(res[idx].search(session.message.text)>=0) {
@@ -1078,7 +1076,6 @@ session.send(session.privateConversationData[ApiAiQuickReply].length);
 				
 				// we cannot find the quickreply. Send the custom text
 				if(FoundQuickReply==0) {
-session.send("test2");
 					request = apiai_app.textRequest(session.message.text, {
 						sessionId: session.message.address.conversation.id
 					});
