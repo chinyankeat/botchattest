@@ -14,7 +14,6 @@ var math = require('mathjs');
 var request = require("request");
 var emoji = require('node-emoji');
 
-
 ////////////////////////////////////////////////////////////////////////////
 // Botbuilder SDK Azure Extension
 var azure = require('./lib/botbuilder-azure.js');
@@ -30,6 +29,7 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false }, azureTableClie
 var apiai = require('apiai'); 
 var apiai_app = apiai(process.env.APIAI_CLIENT_ACCESS_TOKEN);
 var apiai_error_timeout = 0;
+var ApiAiIntroWebHook = 0;
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -293,7 +293,7 @@ bot.dialog('intro', [
 		request.end();
 
 		request.on('response', function(response) {
-			ProcessApiAiResponse(session, response);
+			ProcessApiAiResponseIntro(session, response);
 		});		
     }
 ]);
@@ -815,6 +815,79 @@ bot.dialog('printenv', [
     matches: /^(printEnv)$/
 });
 
+function ProcessApiAiResponseIntro(session, response) {
+	
+//	if(DebugLoggingOn) {
+		console.log('API.AI response:'+ JSON.stringify(response));
+//	}
+	try {
+
+		if (response.result.fulfillment.data != null){
+			// This block of text is for API.ai webhook Facebook messages
+			// we need to store payload for each content
+			if(response.result.fulfillment.data.facebook != null) {
+				
+				if(response.result.fulfillment.data.facebook.quick_replies.length > 0) {
+					var ApiAiQuickReplyTextPayload = "";
+
+					var QuickReplyText = response.result.fulfillment.data.facebook.text;
+					var QuickReplyButtons = [];
+					
+					for(idx=0; idx<response.result.fulfillment.data.facebook.quick_replies.length; idx++) {
+
+						var QuickReplyTitle = response.result.fulfillment.data.facebook.quick_replies[idx].title;
+						var QuickReplyPayload = response.result.fulfillment.data.facebook.quick_replies[idx].payload;
+						
+						var wwwLocation = response.result.fulfillment.data.facebook.quick_replies[idx].payload.search("http");
+						if (wwwLocation>=0){
+							// URL includes http://
+							QuickReplyButtons.push(
+								builder.CardAction.openUrl(session, QuickReplyPayload, QuickReplyTitle));							
+						} else {
+							QuickReplyButtons.push(
+								builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
+						}
+						if(ApiAiQuickReplyTextPayload.length>0) {
+							ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ',' + QuickReplyPayload;
+						} else {
+							ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
+						}
+					}
+
+					ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
+					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+
+					var respCards = new builder.Message(session)
+						.text(QuickReplyText)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+					session.send(respCards);					
+					
+				} else {
+					session.send(response.result.fulfillment.data.facebook.text);
+				}
+			}
+		} else {
+			// No Facebook Message. we only have normal message. output only normal string
+			// Print out each individual Messages
+			var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
+			if(jsonObjectMsg) {
+				for(idx=0; idx<jsonObjectMsg.length; idx++) {
+					if(jsonObjectMsg[idx].speech.length >0) {
+						session.send(jsonObjectMsg[idx].speech);
+					}
+				}
+			}
+		}
+	} catch (e) {
+		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
+	}	
+}
+
+
 function ProcessApiAiResponse(session, response) {
 	
 	if(DebugLoggingOn) {
@@ -1072,6 +1145,7 @@ bot.dialog('CatchAll', [
 							sessionId: session.message.address.conversation.id
 						});
 						request.end();
+session.send("Sending to API.ai " + CurrentQuickReply[1]);
 						FoundQuickReply = 1;
 					}
 				}
@@ -1082,8 +1156,35 @@ bot.dialog('CatchAll', [
 						sessionId: session.message.address.conversation.id
 					});
 					request.end();
+session.send("Sending to API.ai b" + session.message.text);
 				}
-			} else {
+			} else if (session.privateConversationData[ApiAiQuickReply] == undefined){
+				var FoundQuickReply = 0;
+				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
+				var res = thisstring.split("|");
+				session.privateConversationData[ApiAiQuickReply] = 0;
+				
+				for(idx=0; idx<res.length; idx++) {
+					if(res[idx].search(session.message.text)>=0) {
+						var CurrentQuickReply = res[idx].split(",");
+						request = apiai_app.textRequest(CurrentQuickReply[1], {
+							sessionId: session.message.address.conversation.id
+						});
+						request.end();
+session.send("Sending to API.ai c" + CurrentQuickReply[1]);
+						FoundQuickReply = 1;
+					}
+				}
+				
+				// we cannot find the quickreply. Send the custom text
+				if(FoundQuickReply==0) {
+					request = apiai_app.textRequest(session.message.text, {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();
+session.send("Sending to API.ai d" + session.message.text);
+				}			} else {
+session.send("Sending to API.ai e" + session.message.text);
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
