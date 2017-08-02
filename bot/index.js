@@ -1132,7 +1132,9 @@ bot.dialog('CatchAll', [
 			// send the request to API.ai
 			// Senc request to API.ai using quickreply payload if we have it
 			var request = 0;
+session.send("test123" + session.privateConversationData[ApiAiQuickReply]);
 			if(session.privateConversationData[ApiAiQuickReply] != 0) {
+session.send("test123b");
 				var FoundQuickReply = 0;
 				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
 				var res = thisstring.split("|");
@@ -1159,6 +1161,7 @@ session.send("Sending to API.ai " + CurrentQuickReply[1]);
 session.send("Sending to API.ai b" + session.message.text);
 				}
 			} else if (session.privateConversationData[ApiAiQuickReply] == undefined){
+session.send("test123c");
 				var FoundQuickReply = 0;
 				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
 				var res = thisstring.split("|");
@@ -1184,7 +1187,7 @@ session.send("Sending to API.ai c" + CurrentQuickReply[1]);
 					request.end();
 session.send("Sending to API.ai d" + session.message.text);
 				}			} else {
-session.send("Sending to API.ai e" + session.message.text);
+session.send("Sending to API.ai " + session.message.text);
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
