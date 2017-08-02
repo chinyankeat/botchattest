@@ -1137,7 +1137,7 @@ bot.dialog('CatchAll', [
 			// Senc request to API.ai using quickreply payload if we have it
 			var request = 0;
 			if(DebugLoggingOn) {
-				session.send("QuickReply Load: "+ApiAiQuickReplyTextPayload);
+				session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
 			}
 
 			if (session.privateConversationData[ApiAiQuickReply] == undefined){
