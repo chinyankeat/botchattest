@@ -1136,7 +1136,7 @@ session.send("test123" + session.privateConversationData[ApiAiQuickReply]);
 			if (session.privateConversationData[ApiAiQuickReply] == undefined){
 session.send("test123c");
 				var FoundQuickReply = 0;
-				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
+				var thisstring = ApiAiIntroWebHook;
 				var res = thisstring.split("|");
 				session.privateConversationData[ApiAiQuickReply] = 0;
 				
