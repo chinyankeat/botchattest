@@ -1133,7 +1133,34 @@ bot.dialog('CatchAll', [
 			// Senc request to API.ai using quickreply payload if we have it
 			var request = 0;
 session.send("test123" + session.privateConversationData[ApiAiQuickReply]);
-			if(session.privateConversationData[ApiAiQuickReply] != 0) {
+			if (session.privateConversationData[ApiAiQuickReply] == undefined){
+session.send("test123c");
+				var FoundQuickReply = 0;
+				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
+				var res = thisstring.split("|");
+				session.privateConversationData[ApiAiQuickReply] = 0;
+				
+				for(idx=0; idx<res.length; idx++) {
+					if(res[idx].search(session.message.text)>=0) {
+						var CurrentQuickReply = res[idx].split(",");
+						request = apiai_app.textRequest(CurrentQuickReply[1], {
+							sessionId: session.message.address.conversation.id
+						});
+						request.end();
+session.send("Sending to API.ai c" + CurrentQuickReply[1]);
+						FoundQuickReply = 1;
+					}
+				}
+				
+				// we cannot find the quickreply. Send the custom text
+				if(FoundQuickReply==0) {
+					request = apiai_app.textRequest(session.message.text, {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();
+session.send("Sending to API.ai d" + session.message.text);
+				}
+			} else if(session.privateConversationData[ApiAiQuickReply] != 0) {
 session.send("test123b");
 				var FoundQuickReply = 0;
 				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
@@ -1160,33 +1187,7 @@ session.send("Sending to API.ai " + CurrentQuickReply[1]);
 					request.end();
 session.send("Sending to API.ai b" + session.message.text);
 				}
-			} else if (session.privateConversationData[ApiAiQuickReply] == undefined){
-session.send("test123c");
-				var FoundQuickReply = 0;
-				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
-				var res = thisstring.split("|");
-				session.privateConversationData[ApiAiQuickReply] = 0;
-				
-				for(idx=0; idx<res.length; idx++) {
-					if(res[idx].search(session.message.text)>=0) {
-						var CurrentQuickReply = res[idx].split(",");
-						request = apiai_app.textRequest(CurrentQuickReply[1], {
-							sessionId: session.message.address.conversation.id
-						});
-						request.end();
-session.send("Sending to API.ai c" + CurrentQuickReply[1]);
-						FoundQuickReply = 1;
-					}
-				}
-				
-				// we cannot find the quickreply. Send the custom text
-				if(FoundQuickReply==0) {
-					request = apiai_app.textRequest(session.message.text, {
-						sessionId: session.message.address.conversation.id
-					});
-					request.end();
-session.send("Sending to API.ai d" + session.message.text);
-				}			} else {
+			} else {
 session.send("Sending to API.ai " + session.message.text);
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
