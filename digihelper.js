@@ -50,7 +50,7 @@ function startFeedbackTimer() {
 	
 	if((botInteraction == feedbackPopupInteraction) && !feedbackPopupShown) {
 		feedbackPopupShown++;
-		$("#wc-popup-feedback").fadeIn(150);
+//		$("#wc-popup-feedback").fadeIn(150);
 		clearInterval(idleInterval);
 	}
 	
@@ -165,4 +165,4 @@ function verify_login(username,password) {
 			window.location.replace("http://www.digi.com.my");
 		}
 	});
-}
+} 
