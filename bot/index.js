@@ -1140,7 +1140,7 @@ bot.dialog('CatchAll', [
 				session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
 			}
 
-			if (session.privateConversationData[ApiAiQuickReply] == undefined && ApiAiIntroWebHook!=0){
+			if (session.privateConversationData[ApiAiQuickReply] == undefined && ApiAiIntroWebHook>0){
 				var FoundQuickReply = 0;
 				var thisstring = ApiAiIntroWebHook;
 				var res = thisstring.split("|");
@@ -1184,7 +1184,7 @@ bot.dialog('CatchAll', [
 						});
 						request.end();
 						if(DebugLoggingOn) {
-							session.send("2. Sending to API.ai : " + CurrentQuickReply[1]);
+							session.send("3. Sending to API.ai : " + CurrentQuickReply[1]);
 						}
 						FoundQuickReply = 1;
 					}
@@ -1197,7 +1197,7 @@ bot.dialog('CatchAll', [
 					});
 					request.end();
 					if(DebugLoggingOn) {
-						session.send("2. Sending to API.ai : " + session.message.text);
+						session.send("4. Sending to API.ai : " + session.message.text);
 					}
 				}
 			} else {
@@ -1206,7 +1206,7 @@ bot.dialog('CatchAll', [
 				});
 				request.end();				
 				if(DebugLoggingOn) {
-					session.send("2. Sending to API.ai : " + session.message.text);
+					session.send("5. Sending to API.ai : " + session.message.text);
 				}
 			}
 
