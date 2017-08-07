@@ -1081,7 +1081,7 @@ function ProcessApiAiResponse(session, response) {
 						for(idx=0; idx<jsonObjectMsg.length; idx++){
 							CardAttachments.push(
 								new builder.HeroCard(session)
-								.images([ builder.CardImage.create(session, jsonFbImage[idx].imageUrl) ])
+								.images([ builder.CardImage.create(session, jsonObjectMsg[idx].imageUrl) ])
 							);									
 						}
 						if(CardAttachments.length>0) {
