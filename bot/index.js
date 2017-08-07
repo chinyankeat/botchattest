@@ -888,6 +888,7 @@ function ProcessApiAiResponse(session, response) {
 	
 	if(DebugLoggingOn) {
 		console.log('API.AI response:'+ JSON.stringify(response));
+		session.send('API.AI response:'+ JSON.stringify(response));
 	}
 	try {
 		var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.platform=='facebook'});
@@ -1261,10 +1262,10 @@ bot.dialog('CatchAll', [
 					session.send("Let's get back to our chat on Digi");
 				} else {		// We have response from API.AI
 					if(DebugLoggingOn) {
-						console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');						
-						logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
-										"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
+						console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');	
 					}
+					logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
+									"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
 
 					//console.log('API.AI response text:'+ response.result.fulfillment.speech);
 					//console.log('API.AI response:'+ JSON.stringify(response.result));
