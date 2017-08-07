@@ -1121,6 +1121,7 @@ function ProcessApiAiResponse(session, response) {
 		}
 	} catch (e) {
 		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
+		session.send("Hi, I am Will, your Digi Virtual Assistant.How may I help you today?");
 	}	
 }
 
