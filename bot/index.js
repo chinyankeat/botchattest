@@ -28,7 +28,6 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false }, azureTableClie
 // API.ai
 var apiai = require('apiai'); 
 var apiai_app = apiai(process.env.APIAI_CLIENT_ACCESS_TOKEN);
-var apiai_error_timeout = 0;
 var ApiAiIntroWebHook = 'Postpaid,what is the postpaid plans|Prepaid,what is the prepaid plans|Change Plan,i want to change plan';
 
 
@@ -805,8 +804,7 @@ bot.dialog('printenv', [
 					" \n\n APPINSIGHTS_INSTRUMENTATIONKEY:" + process.env.APPINSIGHTS_INSTRUMENTATIONKEY +
 					" \n\n OFFLINE:" + process.env.OFFLINE +
 					" \n\n DEVELOPMENT:" + process.env.DEVELOPMENT +
-					" \n\n APIAI_CLIENT_ACCESS_TOKEN:" + process.env.APIAI_CLIENT_ACCESS_TOKEN +
-					" \n\n APIAI_ERROR_TIMEOUT:" + process.env.APIAI_ERROR_TIMEOUT);
+					" \n\n APIAI_CLIENT_ACCESS_TOKEN:" + process.env.APIAI_CLIENT_ACCESS_TOKEN);
 	}
 ]).triggerAction({
     matches: /^(printEnv)$/
@@ -1174,128 +1172,120 @@ bot.dialog('CatchAll', [
 		// Reset any conversation state
 //		session.privateConversationData[PlanRecommendState] = 0;
 		
-		if (apiai_error_timeout < Date.now()) {
-			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
-						
-			// send the request to API.ai
-			// Senc request to API.ai using quickreply payload if we have it
-			var request = 0;
-			if(DebugLoggingOn) {
-				session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
+		// send the request to API.ai
+		// Senc request to API.ai using quickreply payload if we have it
+		var request = 0;
+		if(DebugLoggingOn) {
+			session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
+		}
+
+		if (session.privateConversationData[ApiAiQuickReply] == undefined){
+			var FoundQuickReply = 0;
+			var thisstring = ApiAiIntroWebHook;
+			var res = thisstring.split("|");
+			session.privateConversationData[ApiAiQuickReply] = 0;
+
+			for(idx=0; idx<res.length; idx++) {
+				if(res[idx].search(session.message.text)>=0) {
+					var CurrentQuickReply = res[idx].split(",");
+					request = apiai_app.textRequest(CurrentQuickReply[1], {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();
+					if(DebugLoggingOn) {
+						session.send("1. Sending to API.ai : " + CurrentQuickReply[1]);
+					}
+					FoundQuickReply = 1;
+				}
 			}
 
-			if (session.privateConversationData[ApiAiQuickReply] == undefined){
-				var FoundQuickReply = 0;
-				var thisstring = ApiAiIntroWebHook;
-				var res = thisstring.split("|");
-				session.privateConversationData[ApiAiQuickReply] = 0;
-				
-				for(idx=0; idx<res.length; idx++) {
-					if(res[idx].search(session.message.text)>=0) {
-						var CurrentQuickReply = res[idx].split(",");
-						request = apiai_app.textRequest(CurrentQuickReply[1], {
-							sessionId: session.message.address.conversation.id
-						});
-						request.end();
-						if(DebugLoggingOn) {
-							session.send("1. Sending to API.ai : " + CurrentQuickReply[1]);
-						}
-						FoundQuickReply = 1;
-					}
-				}
-				
-				// we cannot find the quickreply. Send the custom text
-				if(FoundQuickReply==0) {
-					request = apiai_app.textRequest(session.message.text, {
-						sessionId: session.message.address.conversation.id
-					});
-					request.end();
-					if(DebugLoggingOn) {
-						session.send("2. Sending to API.ai : " + session.message.text);
-					}
-				}
-			} else if(session.privateConversationData[ApiAiQuickReply] != 0) {
-				var FoundQuickReply = 0;
-				var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
-				var res = thisstring.split("|");
-				session.privateConversationData[ApiAiQuickReply] = 0;
-				
-				for(idx=0; idx<res.length; idx++) {
-					if(res[idx].search(session.message.text)>=0) {
-						var CurrentQuickReply = res[idx].split(",");
-						request = apiai_app.textRequest(CurrentQuickReply[1], {
-							sessionId: session.message.address.conversation.id
-						});
-						request.end();
-						if(DebugLoggingOn) {
-							session.send("3. Sending to API.ai : " + CurrentQuickReply[1]);
-						}
-						FoundQuickReply = 1;
-					}
-				}
-				
-				// we cannot find the quickreply. Send the custom text
-				if(FoundQuickReply==0) {
-					request = apiai_app.textRequest(session.message.text, {
-						sessionId: session.message.address.conversation.id
-					});
-					request.end();
-					if(DebugLoggingOn) {
-						session.send("4. Sending to API.ai : " + session.message.text);
-					}
-				}
-			} else {
+			// we cannot find the quickreply. Send the custom text
+			if(FoundQuickReply==0) {
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
-				request.end();				
+				request.end();
 				if(DebugLoggingOn) {
-					session.send("5. Sending to API.ai : " + session.message.text);
+					session.send("2. Sending to API.ai : " + session.message.text);
+				}
+			}
+		} else if(session.privateConversationData[ApiAiQuickReply] != 0) {
+			var FoundQuickReply = 0;
+			var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
+			var res = thisstring.split("|");
+			session.privateConversationData[ApiAiQuickReply] = 0;
+
+			for(idx=0; idx<res.length; idx++) {
+				if(res[idx].search(session.message.text)>=0) {
+					var CurrentQuickReply = res[idx].split(",");
+					request = apiai_app.textRequest(CurrentQuickReply[1], {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();
+					if(DebugLoggingOn) {
+						session.send("3. Sending to API.ai : " + CurrentQuickReply[1]);
+					}
+					FoundQuickReply = 1;
 				}
 			}
 
-			request.on('response', function(response) {
+			// we cannot find the quickreply. Send the custom text
+			if(FoundQuickReply==0) {
+				request = apiai_app.textRequest(session.message.text, {
+					sessionId: session.message.address.conversation.id
+				});
+				request.end();
 				if(DebugLoggingOn) {
-					session.send("Received Response ");
+					session.send("4. Sending to API.ai : " + session.message.text);
 				}
-				if(response.result.action==undefined){
-					session.send("Let's get back to our chat on Digi");
-				} else {		// We have response from API.AI
-					if(DebugLoggingOn) {
-						console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');	
-					}
-					logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
-									"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
-
-					//console.log('API.AI response text:'+ response.result.fulfillment.speech);
-					//console.log('API.AI response:'+ JSON.stringify(response.result));
-
-					// Flow when API.ai returns
-					// 1) Try to call the intent & pass the JSON to the intent 
-					// 2) If intent not exist, check if there is fulfillment speech and display that default speech
-					// 3) If fulfillment speech does not exist, display default "Let's get back to our chat on Digi" 
-					try {
-						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName +"]");
-						ProcessApiAiResponse(session, response);
-						LogResponseTime(session);
-						return;
-					} catch (e) {
-						session.send("Hi, I am Will, your Digi Virtual Assistant.How may I help you today?")
-						LogResponseTime(session);
-					}
-				}
-			});
-			request.on('error', function(error) {
-				console.log('API.AI error:'+error);
-				apiai_error_timeout = Date.now() + process.env.APIAI_ERROR_TIMEOUT*1000;	// Do not use NLP for the next 1 day
-				session.send("Let's get back to our chat on Digi");
-				LogResponseTime(session);
-			});
-
+			}
 		} else {
-			// there were error in the last 1 day. Do not query API AI for the next 1 day
-			session.send("Let's get back to our chat on Digi");
+			request = apiai_app.textRequest(session.message.text, {
+				sessionId: session.message.address.conversation.id
+			});
+			request.end();				
+			if(DebugLoggingOn) {
+				session.send("5. Sending to API.ai : " + session.message.text);
+			}
 		}
+
+		request.on('response', function(response) {
+			if(DebugLoggingOn) {
+				session.send("Received Response ");
+			}
+			if(response.result.action==undefined){
+				session.send("Let's get back to our chat on Digi");
+			} else {		// We have response from API.AI
+				if(DebugLoggingOn) {
+					console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');	
+				}
+				logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
+								"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
+
+				//console.log('API.AI response text:'+ response.result.fulfillment.speech);
+				//console.log('API.AI response:'+ JSON.stringify(response.result));
+
+				// Flow when API.ai returns
+				// 1) Try to call the intent & pass the JSON to the intent 
+				// 2) If intent not exist, check if there is fulfillment speech and display that default speech
+				// 3) If fulfillment speech does not exist, display default "Let's get back to our chat on Digi" 
+				try {
+					console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName +"]");
+					ProcessApiAiResponse(session, response);
+					LogResponseTime(session);
+					return;
+				} catch (e) {
+					session.send("Hi, I am Will, your Digi Virtual Assistant.How may I help you today?")
+					LogResponseTime(session);
+				}
+			}
+		});
+		request.on('error', function(error) {
+			console.log('API.AI error:'+error);
+			session.send("Let's get back to our chat on Digi");
+			LogResponseTime(session);
+		});
+
 	}
 ]).triggerAction({
     matches: /^.*$/i
