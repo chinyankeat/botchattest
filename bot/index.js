@@ -1020,7 +1020,6 @@ function ProcessApiAiResponse(session, response) {
 			if(response.result.fulfillment.data != null) {
 				if(response.result.fulfillment.data.facebook != null) {
 
-console.log("test123");
 					if(response.result.fulfillment.data.facebook.quick_replies.length > 0) {
 						var ApiAiQuickReplyTextPayload = "";
 
@@ -1067,10 +1066,8 @@ console.log("test123");
 					}
 				} else {
 					session.send(response.result.fulfillment.data.facebook.text);
-console.log("test123: "+ response.result.fulfillment.data.facebook.text);
 				}
 			} else {
-console.log("test 1lk23j")
 				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
 				if(jsonObjectMsg) {
 					for(idx=0; idx<jsonObjectMsg.length; idx++) {
@@ -1090,32 +1087,31 @@ console.log("test 1lk23j")
 								.images([ builder.CardImage.create(session, jsonFbImage[idx].imageUrl) ])
 							);									
 						}
+						if(CardAttachments.length>0) {
+							var respCards = new builder.Message(session)
+								.attachmentLayout(builder.AttachmentLayout.carousel)
+								.attachments(CardAttachments)
+								.suggestedActions(
+									builder.SuggestedActions.create(
+										session,QuickReplyButtons
+									)
+								);
+							session.send(respCards);
+						} else  {
+							var respCards = new builder.Message(session)
+								.attachmentLayout(builder.AttachmentLayout.carousel)
+								.text(QuickReplyText)
+								.suggestedActions(
+									builder.SuggestedActions.create(
+										session,QuickReplyButtons
+									)
+								);
+							session.send(respCards);
+						}
 					}
-					if(CardAttachments.length>0) {
-						var respCards = new builder.Message(session)
-							.attachmentLayout(builder.AttachmentLayout.carousel)
-							.attachments(CardAttachments)
-							.suggestedActions(
-								builder.SuggestedActions.create(
-									session,QuickReplyButtons
-								)
-							);
-						session.send(respCards);
-					} else  {
-						var respCards = new builder.Message(session)
-							.attachmentLayout(builder.AttachmentLayout.carousel)
-							.text(QuickReplyText)
-							.suggestedActions(
-								builder.SuggestedActions.create(
-									session,QuickReplyButtons
-								)
-							);
-						session.send(respCards);
-					}				
 				}
 			}						
 		} else {
-console.log("test12345 ");
 			// No Facebook Message. we only have normal message. output only normal string
 			// Print out each individual Messages
 			var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
