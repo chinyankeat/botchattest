@@ -1140,7 +1140,7 @@ bot.dialog('CatchAll', [
 				session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
 			}
 
-			if (session.privateConversationData[ApiAiQuickReply] == undefined){
+			if (session.privateConversationData[ApiAiQuickReply] == undefined && ApiAiIntroWebHook!=0){
 				var FoundQuickReply = 0;
 				var thisstring = ApiAiIntroWebHook;
 				var res = thisstring.split("|");
