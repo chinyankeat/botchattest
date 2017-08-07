@@ -29,7 +29,7 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false }, azureTableClie
 var apiai = require('apiai'); 
 var apiai_app = apiai(process.env.APIAI_CLIENT_ACCESS_TOKEN);
 var apiai_error_timeout = 0;
-var ApiAiIntroWebHook = 0;
+var ApiAiIntroWebHook = 'Postpaid,what is the postpaid plans|Prepaid,what is the prepaid plans|Change Plan,i want to change plan';
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -852,8 +852,7 @@ function ProcessApiAiResponseIntro(session, response) {
 						}
 					}
 
-					ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
-					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+//					ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
 
 					var respCards = new builder.Message(session)
 						.text(QuickReplyText)
