@@ -1275,9 +1275,7 @@ bot.dialog('CatchAll', [
 						LogResponseTime(session);
 						return;
 					} catch (e) {
-						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName + ']');
-						//console.log("CatchAll: object [" + JSON.stringify(response.result) + ']');
-						ProcessApiAiResponse(session, response);
+						session.send("Hi, I am Will, your Digi Virtual Assistant.How may I help you today?")
 						LogResponseTime(session);
 					}
 				}
