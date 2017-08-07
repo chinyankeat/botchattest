@@ -41,7 +41,7 @@ var DialogId = 'DialogId';
 var DialogState = 'DialogState';
 var imagedir = 'https://yellowchat.azurewebsites.net';
 // Recommend State 0=Not recommending
-var PlanRecommendState = 'PlanRecommendState';
+//var PlanRecommendState = 'PlanRecommendState';
 var FeedbackIntent = 'FeedbackIntent';
 var ResponseTime = 'ResponseTime';
 var ApiAiQuickReply = 'ApiAiQuickReply';
@@ -280,18 +280,17 @@ bot.dialog('intro', [
 		if(session.message==null) {
 			session.message = 0;
 		}
-		session.privateConversationData[PlanRecommendState] = 0;	// are we recommending something?
+//		session.privateConversationData[PlanRecommendState] = 0;	// are we recommending something?
 		session.privateConversationData[DialogId] = session.message.address.id;
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
 		session.privateConversationData[ApiAiQuickReply] = 0;		// store Api.ai Quick Reply Payload
-		test = session.privateConversationData[ApiAiQuickReply];		// store Api.ai Quick Reply Payload
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
 		request.end();
 
 		request.on('response', function(response) {
-			ProcessApiAiResponseIntro(session, response);
+			ProcessApiAiResponse(session, response);
 		});		
     }
 ]);
@@ -1171,7 +1170,7 @@ function ProcessApiAiAndAddButton(session, response) {
 bot.dialog('CatchAll', [
     function (session) {
 		// Reset any conversation state
-		session.privateConversationData[PlanRecommendState] = 0;
+//		session.privateConversationData[PlanRecommendState] = 0;
 		
 		if (apiai_error_timeout < Date.now()) {
 			apiai_error_timeout = 0;	// Reset timeout if prevously set to some value
