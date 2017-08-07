@@ -1258,10 +1258,10 @@ bot.dialog('CatchAll', [
 				} else {		// We have response from API.AI
 					if(DebugLoggingOn) {
 						console.log("API.AI [" +response.result.resolvedQuery + '][' + response.result.action + '][' + response.result.score + ']['  + response.result.fulfillment.speech + '][' + response.result.metadata.intentName + ']');						
+						logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
+										"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
 					}
 
-					logConversation(session.message.address.conversation.id, 0/*Dialog ID*/,0/*Dialog State*/,
-									"Intent"/*Dialog Type*/, ""/*Dialog Input*/,response.result.metadata.intentName);					
 					//console.log('API.AI response text:'+ response.result.fulfillment.speech);
 					//console.log('API.AI response:'+ JSON.stringify(response.result));
 
@@ -1271,12 +1271,7 @@ bot.dialog('CatchAll', [
 					// 3) If fulfillment speech does not exist, display default "Let's get back to our chat on Digi" 
 					try {
 						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName +"]");
-						switch (response.result.metadata.intentName) {
-							default:
-								session.privateConversationData[FeedbackIntent] = response.result.metadata.intentName;
-								ProcessApiAiResponse(session, response);
-								break;
-						}
+						ProcessApiAiResponse(session, response);
 						LogResponseTime(session);
 						return;
 					} catch (e) {
