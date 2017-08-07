@@ -40,7 +40,6 @@ var LastMenu = 'LastMenu';
 var DialogId = 'DialogId';
 var DialogState = 'DialogState';
 var imagedir = 'https://yellowchat.azurewebsites.net';
-var FallbackState = 'FallbackState';
 // Recommend State 0=Not recommending
 var PlanRecommendState = 'PlanRecommendState';
 var FeedbackIntent = 'FeedbackIntent';
@@ -283,7 +282,6 @@ bot.dialog('intro', [
 		}
 		session.privateConversationData[PlanRecommendState] = 0;	// are we recommending something?
 		session.privateConversationData[DialogId] = session.message.address.id;
-		session.privateConversationData[FallbackState] = 0;			// how many times user type unknown stuff?
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
 		session.privateConversationData[ApiAiQuickReply] = 0;		// store Api.ai Quick Reply Payload
 		test = session.privateConversationData[ApiAiQuickReply];		// store Api.ai Quick Reply Payload
@@ -732,55 +730,55 @@ bot.dialog('Default-Unknown', [
 	}
 ]);
 
-bot.dialog('Default-Fallback-Intent', [
-    function (session, args) {
-		//console.log('API.AI response in dialog:'+ JSON.stringify(args.result));		
-		switch(session.privateConversationData[FallbackState]){
-			case 1:
-				session.send("I don't quite get you. " +
-							 "\n\n Can you try saying that in a different way? I might be able to help you better.");
-				break;
-			case 2:
-				session.send("Hmmm. I don't think I know that. " + 
-				"\n\nCan you try saying it in a different way? ");
-				break;
-			case 3:
-			case 4:
-			case 5:
-				session.privateConversationData[FallbackState] = 0;				
-				var respCards = new builder.Message(session)
-					.text("I don't understand that. Would you like to talk one of my Human Friends?")
-					.suggestedActions(
-						builder.SuggestedActions.create(
-							session,[
-								builder.CardAction.imBack(session, "Yes", "Yes"),
-								builder.CardAction.imBack(session, "No", "No")
-							]
-						)
-					);
-				builder.Prompts.choice(session, respCards, "Yes|No", { maxRetries:MaxRetries_SingleMenu});				
-				break;
-			default:
-				session.send("I don't quite get you. " +
-							 "\n\n Can you try saying that in a different way? I might be able to help you better.");
-				session.privateConversationData[FallbackState] = 0;
-				break;
-		}
-    }
-	,function(session, results) {
-		switch (results.response.index) {
-			case 0:	// Yes
-				ComplainChannels(session);
-				break;
-			case 1:	// No
-				session.send("Alright. Can I help you with anything else?");
-				break;
-			default:
-				break;
-		}			
-		session.endDialog();
-    }
-]);
+//bot.dialog('Default-Fallback-Intent', [
+//    function (session, args) {
+//		//console.log('API.AI response in dialog:'+ JSON.stringify(args.result));		
+//		switch(session.privateConversationData[FallbackState]){
+//			case 1:
+//				session.send("I don't quite get you. " +
+//							 "\n\n Can you try saying that in a different way? I might be able to help you better.");
+//				break;
+//			case 2:
+//				session.send("Hmmm. I don't think I know that. " + 
+//				"\n\nCan you try saying it in a different way? ");
+//				break;
+//			case 3:
+//			case 4:
+//			case 5:
+//				session.privateConversationData[FallbackState] = 0;				
+//				var respCards = new builder.Message(session)
+//					.text("I don't understand that. Would you like to talk one of my Human Friends?")
+//					.suggestedActions(
+//						builder.SuggestedActions.create(
+//							session,[
+//								builder.CardAction.imBack(session, "Yes", "Yes"),
+//								builder.CardAction.imBack(session, "No", "No")
+//							]
+//						)
+//					);
+//				builder.Prompts.choice(session, respCards, "Yes|No", { maxRetries:MaxRetries_SingleMenu});				
+//				break;
+//			default:
+//				session.send("I don't quite get you. " +
+//							 "\n\n Can you try saying that in a different way? I might be able to help you better.");
+//				session.privateConversationData[FallbackState] = 0;
+//				break;
+//		}
+//    }
+//	,function(session, results) {
+//		switch (results.response.index) {
+//			case 0:	// Yes
+//				ComplainChannels(session);
+//				break;
+//			case 1:	// No
+//				session.send("Alright. Can I help you with anything else?");
+//				break;
+//			default:
+//				break;
+//		}			
+//		session.endDialog();
+//    }
+//]);
 
 bot.dialog('Start-Over', [
     function (session) {
@@ -1065,7 +1063,7 @@ function ProcessApiAiResponse(session, response) {
 						session.send(response.result.fulfillment.data.facebook.text);
 					}
 				} else {
-					session.send(response.result.fulfillment.data.facebook.text);
+					session.send(response.result.fulfillment.messages.speech);
 				}
 			} else {
 				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
@@ -1276,44 +1274,6 @@ bot.dialog('CatchAll', [
 					try {
 						console.log("CatchAll: API.ai Intent [" + response.result.metadata.intentName +"]");
 						switch (response.result.metadata.intentName) {
-							case 'Default-Unknown':
-							case 'Default-Fallback-Intent':
-							case 'Roaming-General':
-								session.privateConversationData[FallbackState]++;
-								session.replaceDialog(response.result.metadata.intentName, response);
-								break;
-							case 'Chat-smile':
-							case 'Chat-Compliment':
-							case 'Chat-Thanks':
-							case 'Chat-Complain':
-							case 'Chat-Helpline':
-								session.privateConversationData[FallbackState] = 0;
-								ProcessApiAiAndAddButton(session,response);
-								break;
-							case 'Chat-Bye':
-							case 'Chat-Greetings':
-							case 'Chat-help':	// Help on using chatbot
-							case 'Chat-Ok':
-							case 'Chat-Rude':
-							case 'Default Welcome Intent':
-							case 'Default-Fallback-Intent':
-							case 'Default-Unknown':
-							case 'FAQ-Bill-Payment': 
-							case 'FAQ-Minimum-Topup':
-							case 'Roaming-Start':
-							case 'Roaming-CallHome':
-							case 'Tips':
-								session.privateConversationData[FallbackState] = 0;
-								ProcessApiAiResponse(session, response);
-								break;
-							case 'Plan-MonthlyBilling':
-							case 'Plan-PayAsYouGo':
-							case 'Plan-Recommendation':
-							case 'Plan-RecommendPlanBySocialMedia':
-							case 'Plan-RecommendPlanByStreaming':								
-								session.privateConversationData[FallbackState] = 0;
-								session.replaceDialog(response.result.metadata.intentName, response);
-								break;								
 							default:
 								session.privateConversationData[FeedbackIntent] = response.result.metadata.intentName;
 								ProcessApiAiResponse(session, response);
