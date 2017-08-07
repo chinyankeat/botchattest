@@ -293,7 +293,7 @@ bot.dialog('intro', [
 		request.end();
 
 		request.on('response', function(response) {
-			ProcessApiAiResponse(session, response, 1 /*this is for intro only*/);
+			ProcessApiAiResponseIntro(session, response);
 		});		
     }
 ]);
@@ -815,8 +815,80 @@ bot.dialog('printenv', [
     matches: /^(printEnv)$/
 });
 
+function ProcessApiAiResponseIntro(session, response) {
+	
+//	if(DebugLoggingOn) {
+		console.log('API.AI response:'+ JSON.stringify(response));
+//	}
+	try {
 
-function ProcessApiAiResponse(session, response, intro=0) {
+		if (response.result.fulfillment.data != null){
+			// This block of text is for API.ai webhook Facebook messages
+			// we need to store payload for each content
+			if(response.result.fulfillment.data.facebook != null) {
+				
+				if(response.result.fulfillment.data.facebook.quick_replies.length > 0) {
+					var ApiAiQuickReplyTextPayload = "";
+
+					var QuickReplyText = response.result.fulfillment.data.facebook.text;
+					var QuickReplyButtons = [];
+					
+					for(idx=0; idx<response.result.fulfillment.data.facebook.quick_replies.length; idx++) {
+
+						var QuickReplyTitle = response.result.fulfillment.data.facebook.quick_replies[idx].title;
+						var QuickReplyPayload = response.result.fulfillment.data.facebook.quick_replies[idx].payload;
+						
+						var wwwLocation = response.result.fulfillment.data.facebook.quick_replies[idx].payload.search("http");
+						if (wwwLocation>=0){
+							// URL includes http://
+							QuickReplyButtons.push(
+								builder.CardAction.openUrl(session, QuickReplyPayload, QuickReplyTitle));							
+						} else {
+							QuickReplyButtons.push(
+								builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
+						}
+						if(ApiAiQuickReplyTextPayload.length>0) {
+							ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ',' + QuickReplyPayload;
+						} else {
+							ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
+						}
+					}
+
+					ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
+					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+
+					var respCards = new builder.Message(session)
+						.text(QuickReplyText)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+					session.send(respCards);					
+					
+				} else {
+					session.send(response.result.fulfillment.data.facebook.text);
+				}
+			}
+		} else {
+			// No Facebook Message. we only have normal message. output only normal string
+			// Print out each individual Messages
+			var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
+			if(jsonObjectMsg) {
+				for(idx=0; idx<jsonObjectMsg.length; idx++) {
+					if(jsonObjectMsg[idx].speech.length >0) {
+						session.send(jsonObjectMsg[idx].speech);
+					}
+				}
+			}
+		}
+	} catch (e) {
+		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
+	}	
+}
+
+
+function ProcessApiAiResponse(session, response) {
 	
 	if(DebugLoggingOn) {
 		console.log('API.AI response:'+ JSON.stringify(response));
@@ -978,9 +1050,6 @@ function ProcessApiAiResponse(session, response, intro=0) {
 						session.send("QuickReply Store:"+ApiAiQuickReplyTextPayload);
 					}
 
-					if(intro>0) {
-						ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
-					}
 					session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
 
 					var respCards = new builder.Message(session)
