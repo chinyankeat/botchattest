@@ -1064,7 +1064,7 @@ function ProcessApiAiResponse(session, response) {
 					session.send(response.result.fulfillment.messages.speech);
 				}
 			} else {
-				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0 && value.platform==null});
+				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==0});
 				if(jsonObjectMsg) {
 					for(idx=0; idx<jsonObjectMsg.length; idx++) {
 						if(jsonObjectMsg[idx].speech.length >0) {
@@ -1072,7 +1072,7 @@ function ProcessApiAiResponse(session, response) {
 						}
 					}
 				}
-				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==3 && value.platform==null});
+				var jsonObjectMsg = response.result.fulfillment.messages.filter(value=> {return value.type==3});
 				if(jsonObjectMsg) {
 					//images here
 					var CardAttachments = [];
