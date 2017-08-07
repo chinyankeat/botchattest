@@ -1254,6 +1254,9 @@ bot.dialog('CatchAll', [
 			}
 
 			request.on('response', function(response) {
+				if(DebugLoggingOn) {
+					session.send("Received Response ");
+				}
 				if(response.result.action==undefined){
 					session.send("Let's get back to our chat on Digi");
 				} else {		// We have response from API.AI
