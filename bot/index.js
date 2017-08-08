@@ -941,7 +941,7 @@ function ProcessApiAiResponse(session, response) {
 			}
 
 			// we have Facebook Quick Reply. Put as quickreply							
-			var jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==4 && value.platform=='facebook'});
+			var jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==2 && value.platform=='facebook'});
 			var QuickReplyButtons = [];
 			var QuickReplyText = "";
 			if(jsonFbQuickReply.length>0) {
@@ -976,6 +976,30 @@ function ProcessApiAiResponse(session, response) {
 				}
 			}
 
+			// we have Facebook Quick Reply from external DB
+			jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==4 && value.platform=='facebook'});
+			QuickReplyButtons = [];
+			QuickReplyText = "";
+			if(jsonFbQuickReply.length>0) {
+				for(idx=0; idx<jsonFbQuickReply.length; idx++){
+					for (idxQuickReply=0; idxQuickReply<jsonFbQuickReply[idx].payload.facebook.quick_replies.length; idxQuickReply++) {						
+						// Check if we have URL
+						var wwwLocation = jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload.search("http");
+						
+						// Add in our predetermined URL
+						if (wwwLocation>=0){
+							// URL includes http://
+							QuickReplyButtons.push(
+								builder.CardAction.openUrl(session, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));							
+						} else {
+							QuickReplyButtons.push(
+								builder.CardAction.imBack(session, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));
+						}
+					}
+				}
+				QuickReplyText = jsonFbQuickReply[0].text;
+			}			
+			
 			if(CardAttachments.length>0) {
 				var respCards = new builder.Message(session)
 					.attachmentLayout(builder.AttachmentLayout.carousel)
