@@ -904,8 +904,8 @@ function ProcessApiAiResponse(session, response) {
 
 			// We have FB Card. Put all cards into carousel
 			var jsonFbCard = response.result.fulfillment.messages.filter(value=> {return value.type==1 && value.platform=='facebook'});
-			var CardAttachments = [];
 			if(jsonFbCard.length>0) {
+				var CardAttachments = [];
 				for(idx=0; idx<jsonFbCard.length; idx++){
 					var CardButtons = [];
 					if(jsonFbCard[idx].buttons!=null) {
@@ -938,6 +938,12 @@ function ProcessApiAiResponse(session, response) {
 						);									
 					}
 				}
+				if(CardAttachments.length>0) {
+					var respCards = new builder.Message(session)
+						.attachmentLayout(builder.AttachmentLayout.carousel)
+						.attachments(CardAttachments);
+					session.send(respCards);
+				}
 			}
 
 			// we have Facebook Quick Reply. Put as quickreply							
@@ -963,16 +969,32 @@ function ProcessApiAiResponse(session, response) {
 					}
 				}
 				QuickReplyText = jsonFbQuickReply[0].title;
+				if(CardAttachments.length>0) {
+					var respCards = new builder.Message(session)
+						.attachmentLayout(builder.AttachmentLayout.carousel)
+						.text(QuickReplyText)
+						.suggestedActions(
+							builder.SuggestedActions.create(session,QuickReplyButtons)
+						);
+					session.send(respCards);
+				}
 			}
 			
 			// We have FB Images			
 			var jsonFbImage = response.result.fulfillment.messages.filter(value=> {return value.type==3 && value.platform=='facebook'});
 			if(jsonFbImage.length>0) {
+				var CardAttachmentsType3 = [];
 				for(idx=0; idx<jsonFbImage.length; idx++){
-					CardAttachments.push(
+					CardAttachmentsType3.push(
 						new builder.HeroCard(session)
 						.images([ builder.CardImage.create(session, jsonFbImage[idx].imageUrl) ])
 					);									
+				}
+				if(CardAttachmentsType3.length>0) {
+					var respCards = new builder.Message(session)
+						.attachmentLayout(builder.AttachmentLayout.carousel)
+						.attachments(CardAttachmentsType3);
+					session.send(respCards);
 				}
 			}
 
@@ -997,31 +1019,20 @@ function ProcessApiAiResponse(session, response) {
 						}
 					}
 				}
-				QuickReplyText = jsonFbQuickReply[0].text;
+				
+				QuickReplyText = jsonFbQuickReply[0].payload.facebook.text;
+				if(QuickReplyButtons.length>0) {
+					var respCards = new builder.Message(session)
+						.text(QuickReplyText)
+						.suggestedActions(
+							builder.SuggestedActions.create(
+								session,QuickReplyButtons
+							)
+						);
+					session.send(respCards);
+				}
 			}			
-			
-			if(CardAttachments.length>0) {
-				var respCards = new builder.Message(session)
-					.attachmentLayout(builder.AttachmentLayout.carousel)
-					.attachments(CardAttachments)
-					.suggestedActions(
-						builder.SuggestedActions.create(
-							session,QuickReplyButtons
-						)
-					);
-				session.send(respCards);
-			} else  {
-				var respCards = new builder.Message(session)
-					.attachmentLayout(builder.AttachmentLayout.carousel)
-					.text(QuickReplyText)
-					.suggestedActions(
-						builder.SuggestedActions.create(
-							session,QuickReplyButtons
-						)
-					);
-				session.send(respCards);
-			}
-			
+						
 		} else if (response.result.fulfillment != null){
 			// This block of text is for API.ai webhook Facebook messages
 			// we need to store payload for each content
