@@ -941,29 +941,18 @@ function ProcessApiAiResponse(session, response) {
 			}
 
 			// we have Facebook Quick Reply. Put as quickreply							
-			var jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==2 && value.platform=='facebook'});
+			var jsonFbQuickReply = response.result.fulfillment.messages.filter(value=> {return value.type==4 && value.platform=='facebook'});
 			var QuickReplyButtons = [];
 			var QuickReplyText = "";
 			if(jsonFbQuickReply.length>0) {
 				for(idx=0; idx<jsonFbQuickReply.length; idx++){
 					for (idxQuickReply=0; idxQuickReply<jsonFbQuickReply[idx].replies.length; idxQuickReply++) {
 
-						// Check if we have escape keys
-						var urlLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search('-L');
-						var urlTitle = jsonFbQuickReply[idx].replies[idxQuickReply].substring(0,urlLocation);
-						var urlString = "";
+						// Check if we have URL
 						var wwwLocation = jsonFbQuickReply[idx].replies[idxQuickReply].search("http");
 						
 						// Add in our predetermined URL
-						if(urlLocation>=0) {
-							var urlReplies = jsonFbQuickReply[idx].replies[idxQuickReply];
-							var selectedUrl = parseInt(urlReplies.substring(urlLocation+2,urlReplies.length)) - 1;
-							if (UrlList.length > selectedUrl) {
-								urlString = UrlList[selectedUrl];
-								QuickReplyButtons.push(
-									builder.CardAction.openUrl(session, urlString, urlTitle));
-							}
-						} else if (wwwLocation>=0){
+						if (wwwLocation>=0){
 							// URL includes http://
 							QuickReplyButtons.push(
 								builder.CardAction.openUrl(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].replies[idxQuickReply]));							
