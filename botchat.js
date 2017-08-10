@@ -6058,8 +6058,9 @@ currentBotText = e;
                     this.textInput.focus(), this.sendMessage()
                 }, t.prototype.onClickHome = function () {  //  Yan Keat: added code here to trigger Main Menu
                     this.props.sendMessage("Chatbot in Training")
+
                 }, t.prototype.onClickResendTyping = function () {  //  Yan Keat: added code here to trigger Main Menu
-					this.props.sendMessage(currentBotText)
+					this.props.sendMessage(currentBotText);
                 }, t.prototype.onChangeFile = function () {
                     this.textInput.focus(), this.props.sendFiles(this.fileInput.files), this.fileInput.value = null
                 }, t.prototype.render = function () {

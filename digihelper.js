@@ -15,7 +15,15 @@ var feedbackPopupTimer = 40;		// popup after 60 seconds idle
 // Counters for Typing Timer
 var typingTimerHandler = 0;	// store callback function for Typing Timer
 var typingTimer = 0;			// how long we have typing ...? 
+var resendCount = 0;
 var currentBotText = "Let's Start";
+
+var variable_1 = 0;
+var variable_2 = 0;
+var variable_3 = 0;
+var variable_4 = 0;
+var variable_5 = 0;
+
 
 $( document ).ready(function() {
 	// function to popup feedback menu
@@ -43,9 +51,17 @@ $( document ).ready(function() {
 function typingTimerCallback() {
 	if(typingTimer>0) {
 		var elapsedTime = (Date.now() - typingTimer)/1000;
-		if(elapsedTime>7) {	// Elapsed more than 7 seconds
-			startTypingTimer();
-			$("#wc-resend-message").trigger( "click" )		
+		if(elapsedTime>10) {	// Elapsed more than 7 seconds
+			if(currentBotText == "Let's Start") {
+				location.reload(false);
+			} else {
+				startTypingTimer();
+				$("#wc-resend-message").trigger( "click");
+				resendCount++;
+			}
+		}
+		if(resendCount>3){
+			location.reload(false);
 		}
 	}
 }
@@ -56,6 +72,7 @@ function startTypingTimer() {
 
 function cancelTypingTimer() {
 	typingTimer = 0;
+	resendCount = 0;
 }
 
 
