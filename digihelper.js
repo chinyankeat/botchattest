@@ -28,7 +28,7 @@ $( document ).ready(function() {
     });
 	
 	// timer for typing
-	typingTimerHandler = setInterval(typingTimerCallback, 6000); // 6 second		
+	typingTimerHandler = setInterval(typingTimerCallback, 1000); // 6 second		
 
 	
 	// function to handle password screen
@@ -43,7 +43,7 @@ $( document ).ready(function() {
 function typingTimerCallback() {
 	if(typingTimer>0) {
 		var elapsedTime = (Date.now() - typingTimer)/1000;
-		if(elapsedTime>1) {
+		if(elapsedTime>7) {	// Elapsed more than 7 seconds
 			startTypingTimer();
 			$("#wc-resend-message").trigger( "click" )		
 		}

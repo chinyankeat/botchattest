@@ -44,6 +44,7 @@ var imagedir = 'https://yellowchat.azurewebsites.net';
 var FeedbackIntent = 'FeedbackIntent';
 var ResponseTime = 'ResponseTime';
 var ApiAiQuickReply = 'ApiAiQuickReply';
+var ApiAiButtonPayload = 'ApiAiButtonPayload';
 var Recommending = 1;
 var RecommendPrepaidBest = 10;
 var RecommendPrepaidLive = 11;
@@ -283,6 +284,7 @@ bot.dialog('intro', [
 		session.privateConversationData[DialogId] = session.message.address.id;
 		session.privateConversationData[ResponseTime] = 0;			// Track the response time
 		session.privateConversationData[ApiAiQuickReply] = 0;		// store Api.ai Quick Reply Payload
+		session.privateConversationData[ApiAiButtonPayload] = 0;		// store Api.ai Quick Reply Payload
 		var request = apiai_app.textRequest("Let's Start", {
 			sessionId: session.message.address.conversation.id
 		});
@@ -910,6 +912,9 @@ function ProcessApiAiResponse(session, response) {
 				for(idx=0; idx<jsonFbCard.length; idx++){
 					var CardButtons = [];
 					if(jsonFbCard[idx].buttons!=null) {
+						// store the Button Payload
+						var ApiAiButtonTextPayload = session.privateConversationData[ApiAiButtonPayload];
+
 						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
 							// Check if quick reply is it HTTP or normal string
 							wwwLocation = jsonFbCard[idx].buttons[idxButton].postback.search("http");
@@ -922,14 +927,18 @@ function ProcessApiAiResponse(session, response) {
 								CardButtons.push(
 									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].text, jsonFbCard[idx].buttons[idxButton].text));
 
-								// Store the payload
-								if(ApiAiQuickReplyTextPayload.length>0) {
-									ApiAiQuickReplyTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+								// Store the payload for button
+								if(ApiAiButtonTextPayload.length>0) {
+									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
+										ApiAiQuickReplyTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+									}
 								} else {
-									ApiAiQuickReplyTextPayload += jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
-								}
+									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+								}								
 							}
 						}
+						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
+
 						CardAttachments.push(
 							new builder.HeroCard(session)
 							.title(jsonFbCard[idx].title)
@@ -1161,9 +1170,6 @@ function ProcessApiAiResponse(session, response) {
 		}
 		
 		// Store the Button Payloads into Memory
-		if(DebugLoggingOn) {
-			session.send("QuickReply Store:"+ApiAiQuickReplyTextPayload);
-		}
 		session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
 		
 		
@@ -1225,11 +1231,12 @@ bot.dialog('CatchAll', [
 		// Senc request to API.ai using quickreply payload if we have it
 		var request = 0;
 		if(DebugLoggingOn) {
-			session.send("QuickReply Load: "+session.privateConversationData[ApiAiQuickReply]);
+			session.send("QuickReply Load: ["+session.privateConversationData[ApiAiQuickReply] + "] and [" + 
+						session.privateConversationData[ApiAiButtonPayload] + "]");
 		}
 
+		var FoundQuickReply = 0;
 		if (session.privateConversationData[ApiAiQuickReply] == undefined){
-			var FoundQuickReply = 0;
 			var thisstring = ApiAiIntroWebHook;
 			var res = thisstring.split("|");
 			session.privateConversationData[ApiAiQuickReply] = 0;
@@ -1247,17 +1254,6 @@ bot.dialog('CatchAll', [
 					FoundQuickReply = 1;
 				}
 			}
-
-			// we cannot find the quickreply. Send the custom text
-			if(FoundQuickReply==0) {
-				request = apiai_app.textRequest(session.message.text, {
-					sessionId: session.message.address.conversation.id
-				});
-				request.end();
-				if(DebugLoggingOn) {
-					session.send("2. Sending to API.ai : " + session.message.text);
-				}
-			}
 		} else if(session.privateConversationData[ApiAiQuickReply] != 0) {
 			var FoundQuickReply = 0;
 			var thisstring = session.privateConversationData[ApiAiQuickReply] + "";
@@ -1272,29 +1268,42 @@ bot.dialog('CatchAll', [
 					});
 					request.end();
 					if(DebugLoggingOn) {
-						session.send("3. Sending to API.ai : " + CurrentQuickReply[1]);
+						session.send("2. Sending to API.ai : " + CurrentQuickReply[1]);
 					}
 					FoundQuickReply = 1;
 				}
 			}
+		} 
+		
+		if(FoundQuickReply==0) {
+			// Don't have quick reply. Let's try to find from Button
+			var FoundButtonText = 0;
+			var buttonstring = session.privateConversationData[ApiAiButtonPayload] + "";
+			var res = buttonstring.split("|");
 
-			// we cannot find the quickreply. Send the custom text
-			if(FoundQuickReply==0) {
+			for(idx=0; idx<res.length; idx++) {
+				if(res[idx].search(session.message.text)>=0) {
+					var CurrentQuickReply = res[idx].split(",");
+					request = apiai_app.textRequest(CurrentQuickReply[1], {
+						sessionId: session.message.address.conversation.id
+					});
+					request.end();
+					if(DebugLoggingOn) {
+						session.send("3. Sending to API.ai : " + CurrentQuickReply[1]);
+					}
+					FoundButtonText = 1;
+				}
+			}			
+			
+			// Cannot find QuickReply & no button text
+			if(FoundButtonText==0) {
 				request = apiai_app.textRequest(session.message.text, {
 					sessionId: session.message.address.conversation.id
 				});
-				request.end();
+				request.end();				
 				if(DebugLoggingOn) {
 					session.send("4. Sending to API.ai : " + session.message.text);
 				}
-			}
-		} else {
-			request = apiai_app.textRequest(session.message.text, {
-				sessionId: session.message.address.conversation.id
-			});
-			request.end();				
-			if(DebugLoggingOn) {
-				session.send("5. Sending to API.ai : " + session.message.text);
 			}
 		}
 
