@@ -28,7 +28,7 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false }, azureTableClie
 // API.ai
 var apiai = require('apiai'); 
 var apiai_app = apiai(process.env.APIAI_CLIENT_ACCESS_TOKEN);
-var ApiAiIntroWebHook = 'Postpaid,what is the postpaid plans|Prepaid,what is the prepaid plans|Change Plan,i want to change plan';
+var ApiAiIntroWebHook = 'Postpaid;What postpaid plans do you have?|Autobilling;What is autobilling?|Internet Sharing;What is internet sharing?';
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -845,9 +845,9 @@ function ProcessApiAiResponseIntro(session, response) {
 								builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
 						}
 						if(ApiAiQuickReplyTextPayload.length>0) {
-							ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ',' + QuickReplyPayload;
+							ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ';' + QuickReplyPayload;
 						} else {
-							ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
+							ApiAiQuickReplyTextPayload += QuickReplyTitle + ';' + QuickReplyPayload;
 						}
 					}
 
@@ -913,6 +913,8 @@ function ProcessApiAiResponse(session, response) {
 					var CardButtons = [];
 					if(jsonFbCard[idx].buttons!=null) {
 						// store the Button Payload
+						if(session.privateConversationData[ApiAiButtonPayload]==undefined) {
+						}
 						var ApiAiButtonTextPayload = session.privateConversationData[ApiAiButtonPayload];
 
 						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
@@ -930,10 +932,10 @@ function ProcessApiAiResponse(session, response) {
 								// Store the payload for button
 								if(ApiAiButtonTextPayload.length>0) {
 									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
-										ApiAiQuickReplyTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+										ApiAiButtonTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
 									}
 								} else {
-									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
 								}								
 							}
 						}
@@ -1041,11 +1043,11 @@ function ProcessApiAiResponse(session, response) {
 							// Store the payload
 							if(ApiAiQuickReplyTextPayload.length>0) {
 								ApiAiQuickReplyTextPayload += '|' + 
-									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ',' +
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ';' +
 									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload;
 							} else {
 								ApiAiQuickReplyTextPayload += 
-									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ',' +
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ';' +
 									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload;
 							}
 						}
@@ -1091,9 +1093,9 @@ function ProcessApiAiResponse(session, response) {
 									builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
 							}
 							if(ApiAiQuickReplyTextPayload.length>0) {
-								ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ',' + QuickReplyPayload;
+								ApiAiQuickReplyTextPayload += '|' + QuickReplyTitle + ';' + QuickReplyPayload;
 							} else {
-								ApiAiQuickReplyTextPayload += QuickReplyTitle + ',' + QuickReplyPayload;
+								ApiAiQuickReplyTextPayload += QuickReplyTitle + ';' + QuickReplyPayload;
 							}
 						}
 
@@ -1243,7 +1245,7 @@ bot.dialog('CatchAll', [
 
 			for(idx=0; idx<res.length; idx++) {
 				if(res[idx].search(session.message.text)>=0) {
-					var CurrentQuickReply = res[idx].split(",");
+					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
 					});
@@ -1262,7 +1264,7 @@ bot.dialog('CatchAll', [
 
 			for(idx=0; idx<res.length; idx++) {
 				if(res[idx].search(session.message.text)>=0) {
-					var CurrentQuickReply = res[idx].split(",");
+					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
 					});
@@ -1283,7 +1285,7 @@ bot.dialog('CatchAll', [
 
 			for(idx=0; idx<res.length; idx++) {
 				if(res[idx].search(session.message.text)>=0) {
-					var CurrentQuickReply = res[idx].split(",");
+					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
 					});
