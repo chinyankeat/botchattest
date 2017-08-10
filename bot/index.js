@@ -889,6 +889,7 @@ function ProcessApiAiResponse(session, response) {
 		session.send('API.AI response:'+ JSON.stringify(response));
 	}
 	try {
+		var ApiAiQuickReplyTextPayload = "";
 		var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.platform=='facebook'});
 		if(jsonobject.length>0) {
 
@@ -919,7 +920,14 @@ function ProcessApiAiResponse(session, response) {
 							} else {
 								// Button is normal imBack
 								CardButtons.push(
-									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
+									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].text, jsonFbCard[idx].buttons[idxButton].text));
+
+								// Store the payload
+								if(ApiAiQuickReplyTextPayload.length>0) {
+									ApiAiQuickReplyTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+								} else {
+									ApiAiQuickReplyTextPayload += jsonFbCard[idx].buttons[idxButton].text + ',' + jsonFbCard[idx].buttons[idxButton].postback;
+								}
 							}
 						}
 						CardAttachments.push(
@@ -1012,10 +1020,25 @@ function ProcessApiAiResponse(session, response) {
 						if (wwwLocation>=0){
 							// URL includes http://
 							QuickReplyButtons.push(
-								builder.CardAction.openUrl(session, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));							
+								builder.CardAction.openUrl(session,
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload,
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));							
 						} else {
 							QuickReplyButtons.push(
-								builder.CardAction.imBack(session, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload, jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));
+								builder.CardAction.imBack(session, 
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title,
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));
+
+							// Store the payload
+							if(ApiAiQuickReplyTextPayload.length>0) {
+								ApiAiQuickReplyTextPayload += '|' + 
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ',' +
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload;
+							} else {
+								ApiAiQuickReplyTextPayload += 
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title + ',' +
+									jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload;
+							}
 						}
 					}
 				}
@@ -1040,7 +1063,6 @@ function ProcessApiAiResponse(session, response) {
 				if(response.result.fulfillment.data.facebook != null) {
 
 					if(response.result.fulfillment.data.facebook.quick_replies.length > 0) {
-						var ApiAiQuickReplyTextPayload = "";
 
 						var QuickReplyText = response.result.fulfillment.data.facebook.text;
 						var QuickReplyButtons = [];
@@ -1066,11 +1088,6 @@ function ProcessApiAiResponse(session, response) {
 							}
 						}
 
-						if(DebugLoggingOn) {
-							session.send("QuickReply Store:"+ApiAiQuickReplyTextPayload);
-						}
-
-						session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
 
 						var respCards = new builder.Message(session)
 							.text(QuickReplyText)
@@ -1129,7 +1146,7 @@ function ProcessApiAiResponse(session, response) {
 						}
 					}
 				}
-			}						
+			}			
 		} else {
 			// No Facebook Message. we only have normal message. output only normal string
 			// Print out each individual Messages
@@ -1142,6 +1159,14 @@ function ProcessApiAiResponse(session, response) {
 				}
 			}
 		}
+		
+		// Store the Button Payloads into Memory
+		if(DebugLoggingOn) {
+			session.send("QuickReply Store:"+ApiAiQuickReplyTextPayload);
+		}
+		session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
+		
+		
 	} catch (e) {
 		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
 		session.send("Hi, I am Will, your Digi Virtual Assistant.How may I help you today?");

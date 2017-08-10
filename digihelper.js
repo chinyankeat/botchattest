@@ -11,6 +11,12 @@ var botInteraction = 0;	// current interactions
 var feedbackPopupShown = 0;			// Has we popup dialog before? 0=no, 1=yes
 var feedbackPopupInteraction = 20;	// popup after 15 interactions
 var feedbackPopupTimer = 40;		// popup after 60 seconds idle
+
+// Counters for Typing Timer
+var typingTimerHandler = 0;	// store callback function for Typing Timer
+var typingTimer = 0;			// how long we have typing ...? 
+var currentBotText = "Let's Start";
+
 $( document ).ready(function() {
 	// function to popup feedback menu
 	//Zero the idle timer on mouse movement.
@@ -21,6 +27,9 @@ $( document ).ready(function() {
         feedbackIdleTime = 0;
     });
 	
+	// timer for typing
+	typingTimerHandler = setInterval(typingTimerCallback, 6000); // 6 second		
+
 	
 	// function to handle password screen
 	$("#login_submit").on("click", function () {
@@ -30,6 +39,28 @@ $( document ).ready(function() {
 		window.location.replace("http://www.digi.com.my");  
 	});	
 });
+
+function typingTimerCallback() {
+	if(typingTimer>0) {
+		var elapsedTime = (Date.now() - typingTimer)/1000;
+		if(elapsedTime>1) {
+			console.log("trigger another ajax");
+			startTypingTimer();
+			$("#wc-resend-message").trigger( "click" )		
+		}
+	}
+}
+
+function startTypingTimer() {
+	console.log("startTypingTimer");
+	typingTimer = Date.now();
+}
+
+function cancelTypingTimer() {
+	console.log("cancelTypingTimer");
+	typingTimer = 0;
+}
+
 
 $('body').keyup(function(e){
     if(e.which == 27){
@@ -43,8 +74,6 @@ $('body.a').on('click',function(){
 //    $(this).attr('href', $(this).attr('href'));
 });
 
-
-// Start Feedback Timer whenever there is user interaction with Bot
 function startFeedbackTimer() {
 	botInteraction++;
 	
