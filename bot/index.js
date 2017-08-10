@@ -910,12 +910,13 @@ function ProcessApiAiResponse(session, response) {
 			if(jsonFbCard.length>0) {
 				var CardAttachments = [];
 				var ApiAiButtonTextPayload = session.privateConversationData[ApiAiButtonPayload];
+				if(ApiAiButtonTextPayload==undefined) {
+					ApiAiButtonTextPayload = "Learn More;what is the call rate for infinite 150?";
+				}
 				for(idx=0; idx<jsonFbCard.length; idx++){
 					var CardButtons = [];
 					if(jsonFbCard[idx].buttons!=null) {
 						// store the Button Payload
-						if(session.privateConversationData[ApiAiButtonPayload]==undefined) {
-						}
 
 						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
 							// Check if quick reply is it HTTP or normal string
@@ -956,7 +957,7 @@ function ProcessApiAiResponse(session, response) {
 						);									
 					}
 				}
-//						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
+				session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
 				if(CardAttachments.length>0) {
 					var respCards = new builder.Message(session)
 						.attachmentLayout(builder.AttachmentLayout.carousel)
