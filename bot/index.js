@@ -930,16 +930,16 @@ function ProcessApiAiResponse(session, response) {
 									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].text, jsonFbCard[idx].buttons[idxButton].text));
 
 								// Store the payload for button
-								if(ApiAiButtonTextPayload.length>0) {
-									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
-										ApiAiButtonTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
-									}
-								} else {
-									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
-								}								
+//								if(ApiAiButtonTextPayload.length>0) {
+//									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
+//										ApiAiButtonTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
+//									}
+//								} else {
+//									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
+//								}								
 							}
 						}
-						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
+//						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
 
 						CardAttachments.push(
 							new builder.HeroCard(session)
