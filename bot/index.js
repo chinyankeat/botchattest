@@ -909,13 +909,13 @@ function ProcessApiAiResponse(session, response) {
 			var jsonFbCard = response.result.fulfillment.messages.filter(value=> {return value.type==1 && value.platform=='facebook'});
 			if(jsonFbCard.length>0) {
 				var CardAttachments = [];
+				var ApiAiButtonTextPayload = session.privateConversationData[ApiAiButtonPayload];
 				for(idx=0; idx<jsonFbCard.length; idx++){
 					var CardButtons = [];
 					if(jsonFbCard[idx].buttons!=null) {
 						// store the Button Payload
 						if(session.privateConversationData[ApiAiButtonPayload]==undefined) {
 						}
-						var ApiAiButtonTextPayload = session.privateConversationData[ApiAiButtonPayload];
 
 						for (idxButton=0; idxButton<jsonFbCard[idx].buttons.length; idxButton++) {
 							// Check if quick reply is it HTTP or normal string
@@ -930,16 +930,15 @@ function ProcessApiAiResponse(session, response) {
 									builder.CardAction.imBack(session, jsonFbCard[idx].buttons[idxButton].text, jsonFbCard[idx].buttons[idxButton].text));
 
 								// Store the payload for button
-//								if(ApiAiButtonTextPayload.length>0) {
-//									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
-//										ApiAiButtonTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
-//									}
-//								} else {
-//									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
-//								}								
+								if(ApiAiButtonTextPayload.length>0) {
+									if(ApiAiButtonTextPayload.search(jsonFbCard[idx].buttons[idxButton].text)<0) {
+										ApiAiButtonTextPayload += '|' + jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
+									}
+								} else {
+									ApiAiButtonTextPayload = jsonFbCard[idx].buttons[idxButton].text + ';' + jsonFbCard[idx].buttons[idxButton].postback;
+								}								
 							}
 						}
-//						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
 
 						CardAttachments.push(
 							new builder.HeroCard(session)
@@ -957,6 +956,7 @@ function ProcessApiAiResponse(session, response) {
 						);									
 					}
 				}
+//						session.privateConversationData[ApiAiButtonPayload] = ApiAiButtonTextPayload;
 				if(CardAttachments.length>0) {
 					var respCards = new builder.Message(session)
 						.attachmentLayout(builder.AttachmentLayout.carousel)
