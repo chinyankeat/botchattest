@@ -44,7 +44,6 @@ function typingTimerCallback() {
 	if(typingTimer>0) {
 		var elapsedTime = (Date.now() - typingTimer)/1000;
 		if(elapsedTime>1) {
-			console.log("trigger another ajax");
 			startTypingTimer();
 			$("#wc-resend-message").trigger( "click" )		
 		}
@@ -52,12 +51,10 @@ function typingTimerCallback() {
 }
 
 function startTypingTimer() {
-	console.log("startTypingTimer");
 	typingTimer = Date.now();
 }
 
 function cancelTypingTimer() {
-	console.log("cancelTypingTimer");
 	typingTimer = 0;
 }
 
