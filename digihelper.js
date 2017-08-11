@@ -53,7 +53,7 @@ function typingTimerCallback() {
 		var elapsedTime = (Date.now() - typingTimer)/1000;
 		if(elapsedTime>10) {	// Elapsed more than 7 seconds
 			if(currentBotText == "Let's Start") {
-				location.reload(false);
+				location.reload(true);
 			} else {
 				startTypingTimer();
 				$("#wc-resend-message").trigger( "click");

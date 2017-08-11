@@ -1228,7 +1228,6 @@ function ProcessApiAiAndAddButton(session, response) {
 bot.dialog('CatchAll', [
     function (session) {
 		// Reset any conversation state
-//		session.privateConversationData[PlanRecommendState] = 0;
 		
 		// send the request to API.ai
 		// Senc request to API.ai using quickreply payload if we have it
@@ -1245,7 +1244,7 @@ bot.dialog('CatchAll', [
 			session.privateConversationData[ApiAiQuickReply] = 0;
 
 			for(idx=0; idx<res.length; idx++) {
-				if(res[idx].search(session.message.text)>=0) {
+				if(res[idx].indexOf(session.message.text)>=0) {
 					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
@@ -1264,7 +1263,7 @@ bot.dialog('CatchAll', [
 			session.privateConversationData[ApiAiQuickReply] = 0;
 
 			for(idx=0; idx<res.length; idx++) {
-				if(res[idx].search(session.message.text)>=0) {
+				if(res[idx].indexOf(session.message.text)>=0) {
 					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
@@ -1285,7 +1284,7 @@ bot.dialog('CatchAll', [
 			var res = buttonstring.split("|");
 
 			for(idx=0; idx<res.length; idx++) {
-				if(res[idx].search(session.message.text)>=0) {
+				if(res[idx].indexOf(session.message.text)>=0) {
 					var CurrentQuickReply = res[idx].split(";");
 					request = apiai_app.textRequest(CurrentQuickReply[1], {
 						sessionId: session.message.address.conversation.id
