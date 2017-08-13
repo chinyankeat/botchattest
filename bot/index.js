@@ -895,8 +895,8 @@ function ProcessApiAiResponse(session, response) {
 				.suggestedActions(
 					builder.SuggestedActions.create(session,QuickReplyButtons)
 				);
-//			session.send(respCards);
-//			ApiAiQuickReplyTextPayload = "Postpaid Plans;What postpaid plans do you have?|Internet Sharing;What is internet sharing?|Pay Bills;How to pay bill?";		
+			session.send(respCards);
+			ApiAiQuickReplyTextPayload = "Postpaid Plans;What postpaid plans do you have?|Internet Sharing;What is internet sharing?|Pay Bills;How to pay bill?";		
 		} else {
 			// no error from API.ai
 			var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.platform=='facebook'});
