@@ -6058,7 +6058,6 @@ currentBotText = e;
                     this.textInput.focus(), this.sendMessage()
                 }, t.prototype.onClickHome = function () {  //  Yan Keat: added code here to trigger Main Menu
                     this.props.sendMessage("Chatbot in Training")
-
                 }, t.prototype.onClickResendTyping = function () {  //  Yan Keat: added code here to trigger Main Menu
 					this.props.sendMessage(currentBotText);
                 }, t.prototype.onChangeFile = function () {
@@ -6305,7 +6304,6 @@ currentBotText = e;
 							element.appendChild(newTypingContainer);
 						}
                     }
-					
                     return r.__assign({}, e, {
                         activities: e.activities.filter(function (e) {
                             return "typing" !== e.type

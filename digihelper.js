@@ -15,7 +15,6 @@ var feedbackPopupTimer = 40;		// popup after 60 seconds idle
 // Counters for Typing Timer
 var typingTimerHandler = 0;	// store callback function for Typing Timer
 var typingTimer = 0;			// how long we have typing ...? 
-var resendCount = 0;
 var currentBotText = "Let's Start";
 
 var variable_1 = 0;
@@ -23,6 +22,11 @@ var variable_2 = 0;
 var variable_3 = 0;
 var variable_4 = 0;
 var variable_5 = 0;
+var variable_6 = 0;
+var variable_7 = 0;
+var variable_8 = 0;
+var variable_9 = 0;
+var variable_10 = 0;
 
 
 $( document ).ready(function() {
@@ -51,17 +55,28 @@ $( document ).ready(function() {
 function typingTimerCallback() {
 	if(typingTimer>0) {
 		var elapsedTime = (Date.now() - typingTimer)/1000;
-		if(elapsedTime>10) {	// Elapsed more than 7 seconds
+		if(elapsedTime>10) {	// Elapsed more than 10 seconds
 			if(currentBotText == "Let's Start") {
+				cancelTypingTimer();
 				location.reload(true);
 			} else {
-				startTypingTimer();
-				$("#wc-resend-message").trigger( "click");
-				resendCount++;
+				cancelTypingTimer();
+//				$("#wc-resend-message").trigger( "click");	// this will trigger bot to resend the last message
+
+				var dotdotdot = document.getElementById('wc-loading-container-id');
+				if(dotdotdot){
+					dotdotdot.parentNode.removeChild(dotdotdot);
+				}
+
+				// this code replaces child, but it will disappear if new text typed. 
+//				var dotdotdot = document.getElementById("wc-loading-container-id");
+//				if(dotdotdot) {
+//					var typingErrorImg = document.createElement("IMG");
+//					typingErrorImg.className = 'wc-loading-container';
+//					typingErrorImg.setAttribute("src", "http://bot.digi.com.my/images/typingerror.png");
+//					dotdotdot.parentNode.replaceChild(typingErrorImg,dotdotdot);
+//				}
 			}
-		}
-		if(resendCount>3){
-			location.reload(false);
 		}
 	}
 }
@@ -72,7 +87,6 @@ function startTypingTimer() {
 
 function cancelTypingTimer() {
 	typingTimer = 0;
-	resendCount = 0;
 }
 
 
