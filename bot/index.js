@@ -291,8 +291,8 @@ bot.dialog('intro', [
 		request.end();
 
 		request.on('response', function(response) {
-			ProcessApiAiResponse(session, response);
-		});		
+			ProcessApiAiResponse(session, response, 1);
+		});
     }
 ]);
 
@@ -871,7 +871,7 @@ function ProcessApiAiResponseIntro(session, response) {
 }
 
 
-function ProcessApiAiResponse(session, response) {
+function ProcessApiAiResponse(session, response, intro=0) {
 	
 	if(DebugLoggingOn) {
 		console.log('API.AI response:'+ JSON.stringify(response));
@@ -882,21 +882,42 @@ function ProcessApiAiResponse(session, response) {
 
 		if(response.status.code != 200) {
 			// somehow API.ai has error
-			var QuickReplyText = "I don't quite get you. Would you like to pick a topic from below instead?";
-			var QuickReplyButtons = [];
-			QuickReplyButtons.push(
-				builder.CardAction.imBack(session, "Postpaid Plans", "Postpaid Plans"));
-			QuickReplyButtons.push(
-				builder.CardAction.imBack(session, "Internet Sharing", "Internet Sharing"));
-			QuickReplyButtons.push(
-				builder.CardAction.imBack(session, "Pay Bills", "Pay Bills"));
-			var respCards = new builder.Message(session)
-				.text(QuickReplyText)
-				.suggestedActions(
-					builder.SuggestedActions.create(session,QuickReplyButtons)
-				);
-			session.send(respCards);
-			ApiAiQuickReplyTextPayload = "Postpaid Plans;What postpaid plans do you have?|Internet Sharing;What is internet sharing?|Pay Bills;How to pay bill?";		
+			if(intro==1) {
+				session.send("Hi, I’m Will. I’m a Chatbot in Training. I learn as I talk to you so that I can serve you better in the future. For now, I’ll only be answering questions related to Postpaid.");
+
+				var QuickReplyText = "You can start by selecting any of the below or asking me questions, eg. What postpaid plans do you have?"
+				var QuickReplyButtons = [];
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Postpaid Plans", "Postpaid Plans"));
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Internet Sharing", "Internet Sharing"));
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Bill Payment", "Bill Payment"));
+				var respCards = new builder.Message(session)
+					.text(QuickReplyText)
+					.suggestedActions(
+						builder.SuggestedActions.create(session,QuickReplyButtons)
+					);
+				session.send(respCards);
+				ApiAiQuickReplyTextPayload = "Postpaid Plans;What postpaid plans do you have?|Internet Sharing;What is internet sharing?|Bill Payment;How to pay bill?";		
+				
+			} else {
+				var QuickReplyText = "I don't quite get you. Would you like to pick a topic from below instead?";
+				var QuickReplyButtons = [];
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Postpaid Plans", "Postpaid Plans"));
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Internet Sharing", "Internet Sharing"));
+				QuickReplyButtons.push(
+					builder.CardAction.imBack(session, "Pay Bills", "Pay Bills"));
+				var respCards = new builder.Message(session)
+					.text(QuickReplyText)
+					.suggestedActions(
+						builder.SuggestedActions.create(session,QuickReplyButtons)
+					);
+				session.send(respCards);
+				ApiAiQuickReplyTextPayload = "Postpaid Plans;What postpaid plans do you have?|Internet Sharing;What is internet sharing?|Pay Bills;How to pay bill?";		
+			}
 		} else {
 			// no error from API.ai
 			var jsonobject = response.result.fulfillment.messages.filter(value=> {return value.platform=='facebook'});
