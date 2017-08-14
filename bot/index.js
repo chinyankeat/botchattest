@@ -28,7 +28,7 @@ var tableStorage = new azure.AzureBotStorage({ gzipData: false }, azureTableClie
 // API.ai
 var apiai = require('apiai'); 
 var apiai_app = apiai(process.env.APIAI_CLIENT_ACCESS_TOKEN);
-var ApiAiIntroWebHook = 'Postpaid;Show me Postpaid Plans|Autobilling;What is autobilling?|Internet Sharing;What is internet sharing?';
+var ApiAiIntroWebHook = 'Postpaid;Show me Postpaid Plans|Autobilling;What is autobilling?|Internet Sharing;What is internet sharing?|Bill Payment;How can I pay bills?';
 
 
 ////////////////////////////////////////////////////////////////////////////
