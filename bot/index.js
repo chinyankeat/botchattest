@@ -885,7 +885,7 @@ function ProcessApiAiResponse(session, response, intro=0) {
 			if(intro==1) {
 				session.send("Hi, I’m Will. I’m a Chatbot in Training. I learn as I talk to you so that I can serve you better in the future. For now, I’ll only be answering questions related to Postpaid.");
 
-				var QuickReplyText = "You can start by selecting any of the below or asking me questions, eg. What postpaid plans do you have?"
+				var QuickReplyText = "You can start by selecting any of the below or asking me questions, e.g. What postpaid plans do you have?"
 				var QuickReplyButtons = [];
 				QuickReplyButtons.push(
 					builder.CardAction.imBack(session, "Postpaid Plans", "Postpaid Plans"));
@@ -952,7 +952,7 @@ function ProcessApiAiResponse(session, response, intro=0) {
 								if(wwwLocation>=0){
 									// URL includes http://
 									CardButtons.push(
-										builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback, jsonFbCard[idx].buttons[idxButton].text));
+										builder.CardAction.openUrl(session, jsonFbCard[idx].buttons[idxButton].postback.slice(wwwLocation), jsonFbCard[idx].buttons[idxButton].text));
 								} else {
 									// Button is normal imBack
 									CardButtons.push(
@@ -1009,7 +1009,7 @@ function ProcessApiAiResponse(session, response, intro=0) {
 							if (wwwLocation>=0){
 								// URL includes http://
 								QuickReplyButtons.push(
-									builder.CardAction.openUrl(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].replies[idxQuickReply]));							
+									builder.CardAction.openUrl(session, jsonFbQuickReply[idx].replies[idxQuickReply].slice(wwwLocation), jsonFbQuickReply[idx].replies[idxQuickReply]));							
 							} else {
 								QuickReplyButtons.push(
 									builder.CardAction.imBack(session, jsonFbQuickReply[idx].replies[idxQuickReply], jsonFbQuickReply[idx].replies[idxQuickReply]));
@@ -1061,7 +1061,7 @@ function ProcessApiAiResponse(session, response, intro=0) {
 								// URL includes http://
 								QuickReplyButtons.push(
 									builder.CardAction.openUrl(session,
-										jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload,
+										jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].payload.slice(wwwLocation),
 										jsonFbQuickReply[idx].payload.facebook.quick_replies[idxQuickReply].title));							
 							} else {
 								QuickReplyButtons.push(
@@ -1116,7 +1116,7 @@ function ProcessApiAiResponse(session, response, intro=0) {
 								if (wwwLocation>=0){
 									// URL includes http://
 									QuickReplyButtons.push(
-										builder.CardAction.openUrl(session, QuickReplyPayload, QuickReplyTitle));							
+										builder.CardAction.openUrl(session, QuickReplyPayload.slice(wwwLocation), QuickReplyTitle));							
 								} else {
 									QuickReplyButtons.push(
 										builder.CardAction.imBack(session, QuickReplyTitle, QuickReplyTitle));
@@ -1203,7 +1203,9 @@ function ProcessApiAiResponse(session, response, intro=0) {
 
 		// Store the Button Payloads into Memory
 		session.privateConversationData[ApiAiQuickReply] = ApiAiQuickReplyTextPayload;
-		
+		if(intro==1) {
+			ApiAiIntroWebHook = ApiAiQuickReplyTextPayload;
+		}
 		
 	} catch (e) {
 		console.log("ProcessApiAiResponse Error: [" + JSON.stringify(response.result) + ']');
